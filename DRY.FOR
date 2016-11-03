@@ -12,9 +12,10 @@
       integer :: icount = 0
       integer i, nt
       character (len=*), parameter :: search_str = "DRY"
+      character (len=*), parameter :: filename = "TAPE6.DAT"
       character (len=1000) :: text
       nt = LEN_TRIM(search_str)
-      open (unit=iu,file="TAPE6.DAT",action="read")
+      open (unit=iu,file=filename,action="read")
       do
          read (iu,"(a)",iostat=ierr) text ! read line into character variable
          if (ierr /= 0) exit
