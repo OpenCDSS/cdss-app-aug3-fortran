@@ -23,47 +23,37 @@ c _________________________________________________________
 c Dimensions, variable declarations and initialization via
 c   data statements
 c
-      character charvar*24,fnlog*24,ver*12,verdate*12
+      character charvar*24,fnlog*24,ver*12,vdate*12
       dimension charvar(3)
       real realvar
       dimension realvar(3)
-      integer int2var*2, int4var*4
+      integer int2var, int4var
       dimension int2var(3), int4var(3)
       integer intvar,nlog
       dimension intvar(3)
-      integer ioptio*2, iback*2
+      integer ioptio, iback
 
-      data charvar /'charvar one',
-&                   'charvar two',
-&                   'charvar three'/
+      data charvar /'charvar one','charvar two','charvar three'/
       data ver     /'version 0.0 '/
-      data verdate /'11/11/2016  '/
+      data vdate   /'11/11/2016  '/
       data fnlog   /'aug4.log'/
-      data realvar /1.111,
-&                   2.222,
-&                   3.333/
-      data int2var /1,
-&                   2,
-&                   3/
-      data int4var /11,
-&                   22,
-&                   33/
-      data intvar  /111,
-&                   222,
-&                   333/
+      data realvar /1.111,2.222,3.333/
+      data int2var /1,2,3/
+      data int4var /11,22,33/
+      data intvar  /111,222,333/
       data nlog    /13/
 c
 c _________________________________________________________
 c     log file
       open(nlog,file=fnlog, status='unknown')
       write(nlog,200) ver, vdate
-        write(6,200) ver, vdate
-  200   format(
+      write(6,200) ver, vdate
+  200 format(
      1 72('_'),//
-     1 '        StateMod                       '/
-     1 '        State of Colorado - Water Supply Planning Model     '//
-     1 '        Version: ',a8,/,
-     1 '        Last revision date: ',a10,//
+     1 '        AUG3                       '/
+     1 '        State of Colorado - Denver Basin Aquifer Model '//
+     1 '        Version: ',a12,/,
+     1 '        Last revision date: ',a12,//
      1 72('_'))     
 c _________________________________________________________
 c     option menu
@@ -87,7 +77,7 @@ c
      1         /,'   [1] : One',
      2         /,'   [2] : Two',
      3         /,'   [3] : Three',
-     4         /,'   [4] : Four')
+     4         /,'   [4] : Version')
 c rrb 10/27/94 Additional Output
         write(6,*) ' '
         read (5,*,err=165) ioptio
@@ -115,7 +105,7 @@ c      call optionthree
       goto 166
 c ______________________________________________________________________
 c     Option Four
-  160 write(nlog, 132) 'Option Four '
+  160 write(nlog, 132) 'Version     '
       write(6,200) ver, vdate
       goto 166
 c ______________________________________________________________________
@@ -135,6 +125,8 @@ c     exit the program
       call flush(6)
   180 format('  AUG4; See detailed messages in file: ', a256) 
   190 write(6,*) 'Stop 0'
+      close(nlog)
       call flush(6)
       call exit(0)
-      stop 
+      stop
+      END
