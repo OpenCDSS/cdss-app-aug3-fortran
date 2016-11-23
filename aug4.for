@@ -1,7 +1,9 @@
 c                            
 c ************************************************************
 c
-        program aug4
+      program aug4
+c
+      IMPLICIT NONE
 c
 c
 c _________________________________________________________
@@ -27,13 +29,16 @@ c     common blocks
       integer X,Y,Z,IWIDE,NTS
       common /rblock1/ QSS(1,1),SUMQSS(1,1),QNOM,DELT(1),FACT
       real QSS,SUMQSS,QNOM,DELT,FACT
+      common /lblock1/ debug_cli, debug_log, runid_commandline
+      logical debug_cli, debug_log, runid_commandline
       include 'aug4_common2.inc'
       !common /iblock2/ nlog,incli,outcli
       !integer nlog,incli,outcli
 c _________________________________________________________
 c     Local variables
 c     command line arguments
-      integer iargcount
+      integer iargcount, command_line_len, status
+      character(len=64) :: command_line
       character(len=32) :: arg, args
       dimension args(10)
 c     tape74
@@ -56,6 +61,8 @@ c
       data nlog     /13/
       data outcli   /6/
       data incli    /5/
+      data debug_cli    /.TRUE./
+      data debug_log    /.TRUE./
 c _________________________________________________________
 c     set the run id
       data rnns    /'R1'/
@@ -66,30 +73,40 @@ c     set the tape74 parameters
 c _________________________________________________________
 c     get and use the command line arguments
       ! gfortran method to get the command line arg strings
+      ! fyi - there is a iargc function for f77 backward compat
+      !CALL GET_COMMAND(command_line, command_line_len, status)
+      !write(outcli,*) "command_line = ",command_line
+      !write(outcli,*) "command_line_len = ",command_line_len
+      !write(outcli,*) "status = ",status
       iargcount = 0
       do
-        call get_command_argument(iarg,arg)
-        write(outcli,*) "arg ",iargcount," = ",arg
+        call get_command_argument(iargcount,arg)
         if (len_trim(arg) == 0) exit
+        if (debug_cli) write(outcli,*) "arg ",iargcount," = ",arg
+        if (debug_log) write(nlog,*) "arg ",iargcount," = ",arg
+        ! use the first arg as the run id if the user provided one
+        if (iargcount.eq.1) then
+          runid_commandline = .TRUE.
+          rnns = arg
+        endif
         args(iargcount+1) = trim(arg)
         iargcount = iargcount + 1
       end do
 c _________________________________________________________
-c     make sure tape74.dat has been renamed
-c     with the run number as the extension
+c     if it exists, make sure tape74.dat (model output) gets renamed
       call tape74setup(basename,extension)
 c _________________________________________________________
 c     log file
       open(nlog,file=fnlog, status='unknown')
-      write(nlog,200) ver, vdate
-      write(outcli,200) ver, vdate
+      write(nlog,200) ver, vdate, rnns
+      write(outcli,200) ver, vdate, rnns
  200  format(
      1 72('_'),//
      2 '        AUG4                       '/
      3 '        State of Colorado - Denver Basin Aquifer Models '//
      4 '        Version: ',a12,/,
      5 '        Last revision date: ',a12,//
-     6 '        Run number set to ''R1''',//
+     6 '        Run id set to ',a32,//
      7 72('_'))     
 c _________________________________________________________
 c     option menu
@@ -192,7 +209,7 @@ c 29 NAME "TAPE74.DAT" AS "TAPE74."+RNRN$
         INQUIRE(FILE=trim(oldfilename), EXIST=file_exists)
         if (file_exists) then
           write(outcli,*)
-     1  'MODEL OUTPUT (TAPE74.DAT) HAS NOT BEEN RENAMED WITH RUN NUMBER'
+     1'MODEL OUTPUT (TAPE74.DAT) HAS NOT BEEN RENAMED WITH A RUN NUMBER'
  200      write(outcli,*)
      1      'ENTER RUN NUMBER TO BE USED TO RENAME TAPE74.DAT  '
           read (incli,*,err=210) newextension
