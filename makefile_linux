@@ -87,7 +87,7 @@ all: $(PROGRAMS)
 #   END PROGRAM prog2
 # prog2.incf code:
 #   INTEGER :: i = 8
-aug4.o: aug4_common2.inc
+aug4.o: aug4_common2.inc aug4_common3.inc
 #
 # Calling external procedures: prog3 requires to link in not just
 # prog3.o, as usual, but also aux.o, which contains a subroutine
