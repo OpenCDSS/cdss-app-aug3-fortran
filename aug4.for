@@ -41,8 +41,8 @@ c     Local variables
       data nlog       /13/
       data outcli     /6/
       data incli      /5/
-      data debug_cli  /.TRUE./
-      data debug_log  /.TRUE./
+      data debug_cli  /.TRUE./ !turn this off in production
+      data debug_log  /.TRUE./ !turn this off in production
 c _________________________________________________________
 c     set the default run id
       data rnns      /'R1'/
@@ -59,8 +59,8 @@ c     set the simulation period default/max count
       data spcount   /10/
 c _________________________________________________________
 c     set the aquifer names
-      data aqselect  /1/
-      data aqcount   /6/
+      data aqselect  /1/ !default selection
+      data aqcount   /6/ !modeled aquifer count
       data aqnams    /'LARAMIE-FOX HILLS       ',
      1                'LOWER ARAPAHOE          ',
      2                'UPPER ARAPAHOE          ',
@@ -81,14 +81,16 @@ c     set the aquifer names
      7                'NA',
      8                'NA',
      9                'NA'/
+c _________________________________________________________
+c     set some parameter constraints
       data sectionmin    /1/
       data sectionmax    /36/
       data townshipmin   /1/
       data townshipmax   /9/
       data rangemin      /60/
       data rangemax      /69/
-
 c _________________________________________________________
+c     debugging output of flags and unit numbers
       if (debug_log) write(nlog,*) "arg4 debug: nlog",nlog
       if (debug_log) write(nlog,*) "arg4 debug: incli",incli
       if (debug_log) write(nlog,*) "arg4 debug: outcli",outcli
@@ -120,6 +122,19 @@ c     create a log file
      7    72('_'))
 c _________________________________________________________
 c     read the "junk" file containing run parameters
+!     50 OPEN "I",#1,"C:\AUG3\JUNK."+RNN$
+!     60 INPUT#1,NSP
+!     70 LINE INPUT#1,SHORT$
+!     80 LINE INPUT#1,DD1$
+!     85 LINE INPUT#1,RN$
+!     90 FOR X=1 TO NSP
+!     100 INPUT#1,NTS(X),TSMULT(X),PERLEN(X)
+!     110 NEXT X
+!     120 CLOSE#1
+!     121 IF RN$<>RNN$ THEN GOSUB 5000:GOTO 50
+!     130 RESTORE 1100
+!     140 READ AQNAM$,TEST$
+!     150 IF TEST$<>MID$(SHORT$,1,2) THEN GOTO 140
       call readjunkfile
 c _________________________________________________________
 c     option menu
@@ -397,7 +412,7 @@ c     read the "junk" file containing run parameters
         include 'aug4_common2.inc'
         include 'aug4_common3.inc'
         ! local variables
-        character(len=48) :: junkfilename
+        character(len=48) :: junkfilename, trimmed
         character(len=127) :: fileline
         logical file_exists, runid_match
         integer i
@@ -430,14 +445,16 @@ c     read the "junk" file containing run parameters
             write(nlog,*)
      1      "arg4 debug: readjunkfile: nsp ",nsp
           endif
-          read(njunk,*)shorts
+          read(njunk,*)fileline
+          trimmed=trim(fileline)
+          shorts=trimmed(1:2)
           if (debug_cli) then
             write(outcli,*)
-     1      "arg4 debug: readjunkfile: shorts ",shorts
+     1      "arg4 debug: readjunkfile: trimmed,shorts ",trimmed,shorts
           endif
           if (debug_log) then
             write(nlog,*)
-     1      "arg4 debug: readjunkfile: shorts ",shorts
+     1      "arg4 debug: readjunkfile: trimmed,shorts ",trimmed,shorts
           endif
           read(njunk,'(A48)')dd1s
           if (debug_cli) then
@@ -477,17 +494,55 @@ c     read the "junk" file containing run parameters
             endif
           end do
           close(njunk)
-          ! then compare run ids
+          ! compare the given run id against the one in the junk file
           if (trim(rnns).eq.trim(rns)) then
+            ! they match, continue processing the junk file data
             if (debug_cli) then
               write(outcli,*)
-     1        "arg4 debug: readjunkfile: rnns = rns",rnns,rns
+     1        "arg4 debug: readjunkfile: match: rnns, rns = ",rnns,rns
             endif
             if (debug_log) then
               write(nlog,*)
-     1        "arg4 debug: readjunkfile: rnns = rns",rnns,rns
+     1        "arg4 debug: readjunkfile: match: rnns, rns = ",rnns,rns
             endif
-            ! done
+            ! get the full aquifer name of the short aquifer code found in the file
+            do i=1,aqcount
+              if(shorts.eq.aqshorts(i)) then
+                aqshort=aqshorts(i)
+                aqnam=aqnams(i)
+                if (debug_cli) then
+                  write(outcli,*)
+     1            "arg4 debug: readjunkfile: aqshort,aqname ",
+     2            aqshort," ",aqnam
+                endif
+                if (debug_log) then
+                  write(nlog,*)
+     1            "arg4 debug: readjunkfile: aqshort,aqname ",
+     2            aqshort," ",aqnam
+                endif
+                return
+              endif
+            end do
+            ! error getting here, no aq match, so rebuild it
+            if (debug_cli) then
+              write(outcli,*)
+     1        "arg4 debug: readjunkfile: aq mismatch, shorts = ",shorts
+            endif
+            if (debug_log) then
+              write(nlog,*)
+     1        "arg4 debug: readjunkfile: aq mismatch, shorts = ",shorts
+            endif
+            if (debug_cli) then
+              write(outcli,*)
+     1        "arg4 debug: readjunkfile: recreating ",trim(junkfilename)
+            endif
+            if (debug_log) then
+              write(nlog,*)
+     1        "arg4 debug: readjunkfile: recreating ",trim(junkfilename)
+            endif
+            call rename(trim(junkfilename),trim(junkfilename)//".old")
+            call createjunkfile
+            goto 100
           else
             ! erase and recreate junk file
             if (debug_cli) then
@@ -498,7 +553,7 @@ c     read the "junk" file containing run parameters
               write(nlog,*)
      1        "arg4 debug: readjunkfile: rnns <> rns",rnns,rns
             endif
-            close(njunk)
+            !close(njunk)
             if (debug_cli) then
               write(outcli,*)
      1        "arg4 debug: readjunkfile: recreating ",trim(junkfilename)
