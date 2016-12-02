@@ -90,6 +90,14 @@ c     set some parameter constraints
       data rangemin      /60/
       data rangemax      /69/
 c _________________________________________________________
+c     section column index
+      data sectioncolumn /6,5,4,3,2,1,
+     1                    1,2,3,4,5,6,
+     2                    6,5,4,3,2,1,
+     3                    1,2,3,4,5,6,
+     4                    6,5,4,3,2,1,
+     5                    1,2,3,4,5,6/
+c _________________________________________________________
 c     debugging output of flags and unit numbers
       if (debug_log) write(nlog,*) "arg4 debug: nlog",nlog
       if (debug_log) write(nlog,*) "arg4 debug: incli",incli
@@ -645,7 +653,42 @@ c     subroutine 5000
         include 'aug4_common3.inc'
         ! local variables
         character(len=48) :: junkfilename, userinput
+
         !select model parameters
+        if (debug_cli) then
+          write(outcli,*)"arg4 debug: createjunkfile: start"
+        endif
+        if (debug_log) then
+          write(nlog,*)"arg4 debug: createjunkfile: start"
+        endif
+        !get the model parameters and then choose a model
+        call selectsimulationperiods
+        call selectaquifer
+        call selectwelllocation
+        call assignmodel
+        ! create the 'junk' data file for the model
+        junkfilename = trim(junk_base)//'.'//rnns
+        open(njunk,file=trim(junkfilename), status='unknown')
+        close(njunk)
+        return
+      end
+c _______________________________________________________
+c     select the number of simulation time periods, spselect  
+!     5001 CLS:PRINT "FILES RESIDENT ON THE APPOLO ARE CONFIGURED AS FOLLOWS WITH RESPECT TO TIME:"
+!     5002 PRINT
+!     5003 PRINT "STRESS PERIOD   No. OF TIME STEPS   TSMULT   LENGTH (years)"
+!     5004 PRINT "-------------   -----------------   ------   --------------"
+!     5005 PRINT "     1                 20            1.01         100"
+!     5006 PRINT "     2                 60            1.01         300"
+!     5007 PRINT
+!     5008 PRINT "If you wish to simulate 2 stress periods as described above, press RETURN only  otherwise enter the number of stress periods to be simulated  ";
+!     5009 INPUT "";NSP$
+      subroutine selectsimulationperiods()
+        IMPLICIT NONE
+        include 'aug4_common2.inc'
+        include 'aug4_common3.inc'
+        ! local variables
+
         if (debug_cli) then
           write(outcli,*)"arg4 debug: createjunkfile: start"
         endif
@@ -679,19 +722,11 @@ c     subroutine 5000
           write(nlog,*)"arg4 debug: createjunkfile: spselect",spselect
         endif
         if (spselect.ge.0.and.spselect.le.spcount) then
-          ! assign model after choosing an aquifer and well location
-          call selectaquifer
-          call selectwelllocation
-          call assignmodel
-          ! create the 'junk' data file for the model
           if(spselect.eq.0) then
             nsp=2
           else
             nsp=spselect
           endif
-          junkfilename = trim(junk_base)//'.'//rnns
-          open(njunk,file=trim(junkfilename), status='unknown')
-          close(njunk)
           return
         endif
         ! nsp input error
@@ -786,8 +821,7 @@ c     select the well location
         include 'aug4_common3.inc'
         ! local variables
         logical locationok
-        integer itownship
-        character ctownship*1
+        character(len=127) :: readline
 
         if (debug_cli) then
           write(outcli,*)"arg4 debug: selectwelllocation: start"
@@ -797,16 +831,18 @@ c     select the well location
         endif
  101    write(outcli,*)
         write(outcli,*)"Enter the well location (e.g. 13,5N,64): "
+        !read (incli,'(A127)',err=98) readline
+        !read (readline,*,err=98) section, township, range
         read (incli,*,err=98) section, township, range
           if (debug_cli) then
             write(outcli,*)
-     1      "arg4 debug: selectmodelandlocation: aqnams(aqselect) = ",
-     2      aqnams(aqselect)
+     1      "arg4 debug: selectwelllocation: section, township, range ",
+     2      section, township, range
           endif
           if (debug_log) then
             write(nlog,*)
-     1      "arg4 debug: selectmodelandlocation: aqnams(aqselect) = ",
-     2      aqnams(aqselect)
+     1      "arg4 debug: selectwelllocation: section, township, range ",
+     2      section, township, range
           endif
         if (section.gt.sectionmin.and.section.le.sectionmax) then
           if (range.ge.rangemin.and.range.le.rangemax) then
@@ -815,9 +851,14 @@ c     select the well location
             !itownship = township[1:1]
             ctownship = township(2:2)
            if(itownship.ge.townshipmin.and.itownship.le.townshipmax)then
-              return
+              if (code.gt.0) then
+                return
+              else
+                write(outcli,*)"Invalid township entered = ", township
+                goto 99
+              endif
             else
-              write(outcli,*)"Invalid range entered = ", range
+              write(outcli,*)"Invalid township entered = ", township
               goto 99
             endif
           else
@@ -830,8 +871,9 @@ c     select the well location
         endif
  98     write(outcli,*)"Error reading location entry."
  99     write(outcli,*)
-     1  "Enter the well location as a section, township and range "//
-     2  "separated by commas."
+     1  "Enter the well location as a section, township and range "
+        write(outcli,*)
+     1  "separated by commas (or on separate lines)."
         write(outcli,*)
      1  "For example: 13, 5N, 64"
         write(outcli,*)
@@ -874,14 +916,24 @@ c     select a model based on the aquifer and well location
         include 'aug4_common2.inc'
         include 'aug4_common3.inc'
         ! local variables
-
+      
         if (debug_cli) then
           write(outcli,*)"arg4 debug: assignmodel: start"
         endif
         if (debug_log) then
           write(nlog,*)"arg4 debug: assignmodel: start"
         endif
-
+        !osel = aqselect
+        select case (aqselect)
+          case (1) ! LARAMIE-FOX HILLS
+          case (2) ! LOWER ARAPAHOE
+          case (3) ! UPPER ARAPAHOE
+          case (4) ! DENVER
+          case (5) ! LOWER DAWSON
+          case (6) ! UPPER DAWSON
+          case default
+            ! uh oh
+        end select
         return
       end
 c _______________________________________________________
@@ -922,5 +974,38 @@ c     subroutine 3270
         include 'aug4_common2.inc'
         include 'aug4_common3.inc'
         ! local variables
+        integer AJ
 
+        JJ = (70-range)*6 - 2
+        AJ = sectioncolumn(range)
+        JJ = JJ+AJ
+        select case (ctownship)
+          case ("n","N")
+!     3450 I=(5-I)*6+INT(SCTN/6-.05)
+            !I is the itownship
+            !note: fortran integer division
+            II = (5-itownship)*6 + ((section-1)/6)
+          case ("s","S")
+!     3430 I=I*6+24+INT(SCTN/6-.05)
+            !I is the itownship
+            !note: fortran integer division
+            II = itownship*6 + 24 + ((section-1)/6)
+          case default
+            !uh oh
+        end select
+        if (II.lt.1.or.II.gt.120) then
+          !uh oh
+          code = 0
+          write(outcli,1001)section, township, range
+ 1001     format("YOU HAVE SELECTED A LOCATION (",I2," ",A3," ",I2,
+     1           ") OUTSIDE THE BASIN.  TRY AGAIN!!")
+        else if (JJ.lt.1.or.JJ.gt.84) then
+          !uh oh
+          code = 0
+          write(outcli,1001)section, township, range
+        else
+          !it's good!
+          code = (II-1)*84 + JJ
+        end if
+        return
       end
