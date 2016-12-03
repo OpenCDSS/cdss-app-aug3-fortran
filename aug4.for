@@ -43,6 +43,8 @@ c     Local variables
       data incli      /5/
       data debug_cli  /.TRUE./ !turn this off in production
       data debug_log  /.TRUE./ !turn this off in production
+      !     5020 DD1$="C:\AUG3\"
+      data dd1s       /'/home/jim/workspaces/dwr_aug3_scripts'/
 c _________________________________________________________
 c     set the default run id
       data rnns      /'R1'/
@@ -54,7 +56,7 @@ c _________________________________________________________
 c     set the junk name
       data junk_base /'JUNK'/
 c _________________________________________________________
-c     set the simulation period default/max count
+c     set the stress period default/max count
       data spselect  /2/
       data spcount   /10/
 c _________________________________________________________
@@ -153,6 +155,16 @@ c         and keep returning to the menu when complete, until exit/stop is selec
 c         (set iback=1)
 c       if ioptio is >0, then it got set on the command line, so don't show the menu
 c         and do not go back
+!     230 CLS
+!     240 REM PRINT "SELECT OPTION:";TAB(2);"1) CODE TAPE9.DAT (WELL LIST)";TAB(2);"2) PRINT REPORT";TAB(2);"3) PLOT GRID MAP";TAB(2);"4) PLOT GRID MAP WITH WELL LOCATION(S)";TAB(2);"5) PLOT STREAM DEPLETIONS";TAB(2);"6) STOP"
+!     241 PRINT "SELECT OPTION:";TAB(2);"1) CODE TAPE9.DAT (WELL LIST)";TAB(2);"6) STOP"
+!     250 INPUT "       enter appropriate line number  ";OSELECT
+!     260 IF OSELECT=6 THEN SYSTEM
+!     261 IF OSELECT=1 THEN GOTO 280
+!     262 IF OSELECT=2 THEN GOTO 800
+!     263 IF OSELECT=3 OR OSELECT=4 THEN CHAIN "C:AUG3MOD1.BAS"
+!     264 IF OSELECT=5 THEN CHAIN "C:AUG3MOD2.BAS"
+!     270 GOTO 50
       ioptio = 0
       iback = 0
  100  if(ioptio.eq.0) then
@@ -161,43 +173,72 @@ c         and do not go back
         call flush(6)
  110    format(/,
      1           ' Option? ',
-     2        //,'   [0] : STOP',
-     3         /,'   [1] : One',
-     4         /,'   [2] : Two',
-     5         /,'   [3] : Three',
-     6         /,'   [4] : Version')
-c rrb 10/27/94 Additional Output
+     2        //,'   [1] : CODE TAPE9.DAT (WELL LIST)',
+     3         /,'   [6] : STOP')
         write(outcli,*) ' '
         read (incli,*,err=165) ioptio
       endif
 c _________________________________________________________
-c     user selected exit/stop from menu
-      if(ioptio.eq.0) goto 170
-      if(ioptio.gt.4) goto 165
-      GO TO (130,140,150,160) IOPTIO
+c     user selected options from menu
+      select case (ioptio)
+        case (1) ! build tape9 input file
+          goto 130
+        case (2) ! unused
+          goto 140
+        case (3)
+          goto 150
+        case (4)
+          goto 160
+        case (5)
+          goto 160
+        case (6)
+          goto 170
+        case default
+          goto 165
+      end select
+
 c ______________________________________________________________________
-c     Option One
- 130  write(nlog, 132) 'Option One  '
-      write(outcli, 132) 'Option One  '
- 132  format(/,72('_'),//'  AUG4; Option selected = ', a12)
+c     Option 1 - build tape9 input file
+ 130  continue
+      if (debug_cli) then
+        write(outcli,*)"arg4 debug: option 1 selected - tape9 build"
+      endif
+      if (debug_log) then
+        write(nlog,*)"arg4 debug: option 1 selected - tape9 build"
+      endif
 c      call optionone
       goto 166
 c ______________________________________________________________________
 c     Option Two
- 140  write(nlog, 132) 'Option Two  '
-      write(outcli, 132) 'Option Two  '
+ 140  continue
+      if (debug_cli) then
+        write(outcli,*)"arg4 debug: option 2 selected - "
+      endif
+      if (debug_log) then
+        write(nlog,*)"arg4 debug: option 2 selected - "
+      endif
 c      call optiontwo
       goto 166
 c ______________________________________________________________________
 c     Option Three
- 150  write(nlog, 132) 'Option Three'
-      write(outcli, 132) 'Option Three'
+ 150  continue
+      if (debug_cli) then
+        write(outcli,*)"arg4 debug: option 3 selected - "
+      endif
+      if (debug_log) then
+        write(nlog,*)"arg4 debug: option 3 selected - "
+      endif
 c      call optionthree
       goto 166
 c ______________________________________________________________________
 c     Option Four
- 160  write(nlog, 132) 'Version     '
-      write(outcli, 132) 'Option Four '
+ 160  continue
+      if (debug_cli) then
+        write(outcli,*)"arg4 debug: option 4 selected - version info"
+      endif
+      if (debug_log) then
+        write(nlog,*)"arg4 debug: option 4 selected - version info"
+      endif
       write(outcli, 300) ver, vdate, rnns
       goto 166
 c ______________________________________________________________________
@@ -215,15 +256,13 @@ c _________________________________________________________
 c     exit the program      
  170  write(outcli,180) fnlog
       call flush(outcli)
- 180  format(/,'  AUG4; See detailed messages in file: ',a24,/) 
+ 180  format(/,'  AUG4 exiting; Log file created: ',a24,/) 
  190  write(outcli,*) 'Stop 0'
       close(nlog)
       call flush(outcli)
       call exit(0)
       stop
       END
-
-
 c _________________________________________________________
 c     make sure tape74.dat output file gets renamed before continuing
 c 20 ON ERROR GOTO 4000
@@ -653,6 +692,7 @@ c     subroutine 5000
         include 'aug4_common3.inc'
         ! local variables
         character(len=48) :: junkfilename, userinput
+        integer iperlen, sp
 
         !select model parameters
         if (debug_cli) then
@@ -662,18 +702,89 @@ c     subroutine 5000
           write(nlog,*)"arg4 debug: createjunkfile: start"
         endif
         !get the model parameters and then choose a model
-        call selectsimulationperiods
+        call selectstressperiods
         call selectaquifer
         call selectwelllocation
         call assignmodel
+        ! set up the data
+!     5021 IF NSP$="" THEN NSP=2 ELSE NSP=VAL(NSP$):GOTO 5040
+        if(spselect.eq.0) then
+          nsp=2
+!     5022 NTS(1)=20:NTS(2)=60
+!     5023 TSMULT(1)=1.01:TSMULT(2)=1.01
+!     5024 PERLEN(1)=100:PERLEN(2)=300
+          nts(1) = 20
+          nts(2) = 60
+          tsmult(1) = 1.01
+          tsmult(2) = 1.01
+          perlen(1) = 100
+          perlen(2) = 300
+        else
+          nsp=spselect
+!     5040 CLS:PRINT "REMEMBER FILES ON APOLLO ARE CONFIGURED FOR 2 STRESS PERIODS.  YOU WILL HAVE TO CHANGE TAPE1.DAT ON THE APOLLO.":PRINT
+!     5041 FOR X=1 TO NSP 
+!     5060 PRINT "FOR STRESS PERIOD #";X
+!     5070 REM INPUT "ENTER NUMBER OF TIME STEPS";NTS(X)
+!     5080 REM INPUT "ENTER TIME STEP MULTIPLIER";TSMULT(X)
+!     5090 INPUT "ENTER LENGTH OF STRESS PERIOD (years) ";PERLEN(X) 
+!     5092 NTS(X)=PERLEN(X)/5
+!     5093 TSMULT(X)=1.0001
+!     5095 IF PERLEN(X)>300 THEN BEEP:CLS:PRINT "LENGTH OF TIME STEP CANNOT EXCEED 300 YEARS.  (press RETURN to abort) ...";:INPUT "";N$:SYSTEM
+!     5100 NEXT X
+          write(outcli,*)
+     1   "REMEMBER FILES ON APOLLO ARE CONFIGURED FOR 2 STRESS PERIODS."
+          write(outcli,*)
+     1    "  YOU WILL HAVE TO CHANGE TAPE1.DAT ON THE APOLLO."
+          !loop through the nsp stress periods and get the stress period lengths
+          do sp=1,nsp
+ 98         write(outcli,1001)sp
+ 1001      format("For stress period ",I2,", enter the length (years):")
+            read(incli,*,err=99)iperlen
+            if(iperlen.gt.300) then
+              write(outcli,*)
+     1        "Invalid input.  Year count can not exceed 300."
+              goto 98
+             endif
+            if(iperlen.eq.0) then
+              write(outcli,*)
+     1        "Invalid input.  Year count can not equal 0."
+              goto 98
+            endif
+            perlen(sp) = iperlen
+            nts(sp) = iperlen / 5 ! 5 year time steps - note this is integer division
+            tsmult(sp) = 1.0001
+            goto 100
+            ! iperlen input error
+ 99         write(outcli,*)
+     1      "Invalid input.  Year count must be an integer."
+            goto 98
+ 100        continue   
+          end do
+        endif
         ! create the 'junk' data file for the model
+!     5110 OPEN "O",#1,"C:\AUG3\JUNK."+RNN$
+!     5120 PRINT#1,NSP
+!     5130 PRINT#1,SHORT$
+!     5140 PRINT#1,DD1$
+!     5145 PRINT#1,RNN$
+!     5150 FOR X=1 TO NSP
+!     5160 PRINT#1,NTS(X);TSMULT(X);PERLEN(X)
+!     5165 NEXT X
+!     5170 CLOSE#1
         junkfilename = trim(junk_base)//'.'//rnns
         open(njunk,file=trim(junkfilename), status='unknown')
+        write(njunk,*)nsp
+        write(njunk,*)modelshort
+        write(njunk,*)dd1s
+        write(njunk,*)rnns
+        do sp=1,nsp
+          write(njunk,*)nts(sp),tsmult(sp),perlen(sp)
+        end do
         close(njunk)
         return
       end
 c _______________________________________________________
-c     select the number of simulation time periods, spselect  
+c     select the number of stress time periods, spselect  
 !     5001 CLS:PRINT "FILES RESIDENT ON THE APPOLO ARE CONFIGURED AS FOLLOWS WITH RESPECT TO TIME:"
 !     5002 PRINT
 !     5003 PRINT "STRESS PERIOD   No. OF TIME STEPS   TSMULT   LENGTH (years)"
@@ -683,7 +794,7 @@ c     select the number of simulation time periods, spselect
 !     5007 PRINT
 !     5008 PRINT "If you wish to simulate 2 stress periods as described above, press RETURN only  otherwise enter the number of stress periods to be simulated  ";
 !     5009 INPUT "";NSP$
-      subroutine selectsimulationperiods()
+      subroutine selectstressperiods()
         IMPLICIT NONE
         include 'aug4_common2.inc'
         include 'aug4_common3.inc'
@@ -722,11 +833,6 @@ c     select the number of simulation time periods, spselect
           write(nlog,*)"arg4 debug: createjunkfile: spselect",spselect
         endif
         if (spselect.ge.0.and.spselect.le.spcount) then
-          if(spselect.eq.0) then
-            nsp=2
-          else
-            nsp=spselect
-          endif
           return
         endif
         ! nsp input error
@@ -850,15 +956,52 @@ c     select the well location
             !read(township,'(1x,A1)')ctownship
             !itownship = township[1:1]
             ctownship = township(2:2)
+            if (debug_cli) then
+              write(outcli,*)
+     1        "arg4 debug: selectwelllocation: itownship, ctownship",
+     2        itownship, ctownship
+            endif
+            if (debug_log) then
+              write(nlog,*)
+     1        "arg4 debug: selectwelllocation: itownship, ctownship",
+     2        itownship, ctownship
+            endif
            if(itownship.ge.townshipmin.and.itownship.le.townshipmax)then
+              call checkwelllocation
               if (code.gt.0) then
+                write(outcli,*)"Code =",code
                 return
               else
-                write(outcli,*)"Invalid township entered = ", township
+                write(outcli,*)"Invalid location (",
+     1          section, township, range,") Try again"
+                if (debug_cli) then
+                  write(outcli,*)"arg4 debug: selectwelllocation: ",
+     1            "section,township,range,code,II,JJ",
+     2            section,township,range,code,II,JJ
+                endif
+                if (debug_log) then
+                  write(nlog,*)"arg4 debug: selectwelllocation: ",
+     1            "section,township,range,code,II,JJ",
+     2            section,township,range,code,II,JJ
+                endif
                 goto 99
               endif
             else
-              write(outcli,*)"Invalid township entered = ", township
+              write(outcli,*)"Invalid township (",township,") Try again"
+              if (debug_cli) then
+                write(outcli,*)
+     1        "Invalid township entered = township,itownship,ctownship",
+     2          township, itownship, ctownship
+                write(outcli,*)"  townshipmin,townshipmax ",
+     1          townshipmin, townshipmax
+              endif
+              if (debug_log) then
+                write(nlog,*)
+     1        "Invalid township entered = township,itownship,ctownship",
+     2          township, itownship, ctownship
+                write(nlog,*)"  townshipmin,townshipmax ",
+     1          townshipmin, townshipmax
+              endif
               goto 99
             endif
           else
@@ -916,24 +1059,110 @@ c     select a model based on the aquifer and well location
         include 'aug4_common2.inc'
         include 'aug4_common3.inc'
         ! local variables
-      
+        character (len=99) nuts
+
         if (debug_cli) then
           write(outcli,*)"arg4 debug: assignmodel: start"
+          write(outcli,*)"arg4 debug: assignmodel: II, JJ", II, JJ
         endif
         if (debug_log) then
           write(nlog,*)"arg4 debug: assignmodel: start"
+          write(nlog,*)"arg4 debug: assignmodel: II, JJ", II, JJ
         endif
         !osel = aqselect
+!     6160 ON OSEL GOTO 6170,6250,6270,6330,6360,6370
         select case (aqselect)
           case (1) ! LARAMIE-FOX HILLS
+!     6170 IF I>95 AND J<53 THEN SHORT$="LF8"
+            if(II.gt.95.and.JJ.lt.53) then
+              modelshort = "LF8"
+!     6180 IF I<57 AND J<21 THEN SHORT$="LF6":GOTO 6380
+            else if(II.lt.57.and.JJ.lt.21) then
+              modelshort = "LF6"
+!     6190 IF I<33 AND J<66 THEN SHORT$="LF1":GOTO 6380
+            else if(II.lt.33.and.JJ.lt.66) then
+              modelshort = "LF1"
+!     6200 IF I<24 THEN GOTO 6380
+            else if(II.lt.24) then
+              modelshort = "NA"
+!     6205 IF I<44 AND J>65 THEN SHORT$="LF2"
+            else if(II.lt.44.and.JJ.gt.65) then
+              modelshort = "LF2"
+!     6210 IF I<87 AND J<39 THEN SHORT$="LF4"
+            else if(II.lt.87.and.JJ.lt.39) then
+              modelshort = "LF4"
+!     6220 IF I>66 AND J>55 THEN SHORT$="LF3"
+            else if(II.gt.66.and.JJ.gt.55) then
+              modelshort = "LF3"
+            else
+              modelshort = "NA"
+            end if
           case (2) ! LOWER ARAPAHOE
+!     6250 SHORT$="LA1"
+            modelshort = "LA1"
           case (3) ! UPPER ARAPAHOE
+!     6270 IF I<66 AND J<38 THEN SHORT$="AR1":GOTO 6380
+            if(II.lt.66.and.JJ.lt.38) then
+              modelshort = "AR1"
+!     6280 IF I<72 AND J>37 THEN SHORT$="AR2":GOTO 6380
+            else if(II.lt.72.and.JJ.gt.37) then
+              modelshort = "AR2"
+!     6290 IF I>83 AND J<47 THEN SHORT$="AR9":GOTO 6380
+            else if(II.gt.83.and.JJ.lt.47) then
+              modelshort = "AR9"
+!     6300 IF J<38 THEN SHORT$="AR3":GOTO 6380
+            else if(JJ.lt.38) then
+              modelshort = "AR3"
+!     6310 IF I>77 THEN SHORT$="AR4"
+            else if(II.gt.77) then
+              modelshort = "AR4"
+            end if
           case (4) ! DENVER
+!     6330 IF I>82 THEN SHORT$="DE10":GOTO 6380
+            if(II.gt.82) then
+              modelshort = "DE10"
+!     6340 IF J>35 THEN SHORT$="DE9" ELSE SHORT$="DE8"          
+            else if(JJ.gt.35) then
+              modelshort = "DE9"
+            else
+              modelshort = "DE8"
+            end if
           case (5) ! LOWER DAWSON
+!     6360 SHORT$="LD2":GOTO 6380
+            modelshort = "LD2"
           case (6) ! UPPER DAWSON
+!     6370 IF I<83 THEN SHORT$="DA1" ELSE SHORT$="DA2"
+            if(II.lt.83) then
+              modelshort = "DA1"
+            else
+              modelshort = "DA2"
+            end if
           case default
             ! uh oh
+            modelshort = "NA"
         end select
+        if (modelshort.eq."NA") then
+          if (debug_cli) then
+            write(outcli,*)"arg4 debug: assignmodel: II, JJ", II, JJ
+          endif
+          if (debug_log) then
+            write(nlog,*)"arg4 debug: assignmodel: II, JJ", II, JJ
+            write(nlog,*)
+     1      "ADEQUATE MODEL NOT AVAILABLE. exit AUG4"
+          endif
+          write(outcli,*)
+     1    "ADEQUATE MODEL NOT AVAILABLE (press RETURN to exit AUG4...)"
+          read(incli,*)nuts
+          call exit(99)
+        end if
+          if (debug_cli) then
+            write(outcli,*)
+     1      "arg4 debug: assignmodel: modelshort",modelshort
+          endif
+          if (debug_log) then
+            write(nlog,*)
+     1      "arg4 debug: assignmodel: modelshort",modelshort
+          endif
         return
       end
 c _______________________________________________________
@@ -976,22 +1205,54 @@ c     subroutine 3270
         ! local variables
         integer AJ
 
+        if (debug_cli) then
+          write(outcli,*)"arg4 debug: checkwelllocation: start"
+        endif
+        if (debug_log) then
+          write(outcli,*)"arg4 debug: checkwelllocation: start"
+        endif
         JJ = (70-range)*6 - 2
-        AJ = sectioncolumn(range)
+        AJ = sectioncolumn(section)
         JJ = JJ+AJ
+        if (debug_cli) then
+          write(outcli,*)"arg4 debug: checkwelllocation: ",
+     1    "range,JJ,AJ",range,JJ,AJ
+        endif
+        if (debug_log) then
+          write(nlog,*)"arg4 debug: checkwelllocation: ",
+     1    "range,JJ,AJ",range,JJ,AJ
+        endif
         select case (ctownship)
           case ("n","N")
 !     3450 I=(5-I)*6+INT(SCTN/6-.05)
             !I is the itownship
             !note: fortran integer division
             II = (5-itownship)*6 + ((section-1)/6)
+            if (debug_cli) then
+              write(outcli,*)"arg4 debug: checkwelllocation: N II ",II
+            endif
+            if (debug_log) then
+              write(nlog,*)"arg4 debug: checkwelllocation: N II ",II
+            endif
           case ("s","S")
 !     3430 I=I*6+24+INT(SCTN/6-.05)
             !I is the itownship
             !note: fortran integer division
             II = itownship*6 + 24 + ((section-1)/6)
+            if (debug_cli) then
+              write(outcli,*)"arg4 debug: checkwelllocation: S II ",II
+            endif
+            if (debug_log) then
+              write(nlog,*)"arg4 debug: checkwelllocation: S II ",II
+            endif
           case default
             !uh oh
+            if (debug_cli) then
+              write(outcli,*)"arg4 debug: checkwelllocation: default "
+            endif
+            if (debug_log) then
+              write(nlog,*)"arg4 debug: checkwelllocation: default "
+            endif
         end select
         if (II.lt.1.or.II.gt.120) then
           !uh oh
@@ -1007,5 +1268,15 @@ c     subroutine 3270
           !it's good!
           code = (II-1)*84 + JJ
         end if
+        if (debug_cli) then
+          write(outcli,*)"arg4 debug: checkwelllocation: ",
+     1    "section,township,itownship,ctownship,range,code,II,JJ",
+     2    section,township,itownship,ctownship,range,code,II,JJ
+        endif
+        if (debug_log) then
+          write(nlog,*)"arg4 debug: checkwelllocation: ",
+     1    "section,township,itownship,ctownship,range,code,II,JJ",
+     2    section,township,itownship,ctownship,range,code,II,JJ
+        endif
         return
       end
