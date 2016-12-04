@@ -100,6 +100,218 @@ c     section column index
      4                    6,5,4,3,2,1,
      5                    1,2,3,4,5,6/
 c _________________________________________________________
+c     tape9 data
+!     310 RESTORE 330
+!     320 READ TN$,NA$,A1$,A2$
+!     330 DATA "9","WELL","  YIELD (gpm)"," + for pumping     WELL LOCATION"
+      data tns   /"9"/
+      data nas   /"WELL"/
+      data a1s   /"  YIELD (gpm)"/
+      data a2s   /" + for pumping     WELL LOCATION"/
+!     2480 DATA "AR9",7,MONUMENT,KETTLE,COTTONWOOD,SHOOKS RUN,SAND,JIMMY CAMP,BLACK SQUIRREL,78,17,37,36
+!     2490 DATA DE8,14,WEST PLUM,PLUM,LITTLE DRY,PLATTE,BEAR,CLEAR CREEK,CHERRY CREEK,SAND CREEK,1st CREEK,2nd CREEK,3rd CREEK,BEEBE SEEP,BOX ELDER,KIOWA,29,2,60,40
+!     2495 DATA DE11,14,WEST PLUM,PLUM,LITTLE DRY,PLATTE,BEAR,CLEAR CREEK,CHERRY CREEK,SAND CREEK,1st CREEK,2nd CREEK,3rd CREEK,BEEBE SEEP,BOX ELDER,KIOWA,29,2,60,40
+!     2500 DATA LD2,8,PLUM,LITTLE DRY,CHERRY CREEK,COAL CREEK,RUNNING CREEK,KIOWA,WOLF,COMANCHE,54,13,49,36
+!     2510 DATA DE9,7,SAND CREEK,1st CREEK,3rd CREEK,BOX ELDER,LOST CREEK,KIOWA COMANCHE & WOLF,BIJOU,30,30,59,31
+!     2520 DATA DE10,9,BIJOU,BIG SANDY,MONUMENT,COTTONWOOD,SHOOKS RUN,SAND CREEK,BLACK SQUIRREL,STEELS FORK,HORSE CREEK,77,15,33,48
+!     2530 DATA CW1,10,MONUMENT,EAST PLUM - w,EAST PLUM - e,WEST CHERRY,EAST CHERRY,CHERRY,KIOWA,KETTLE,SAND,BIG SANDY,51,16,49,36
+!     2540 DATA LA1,4,BIG DRY,S. PLATTE,BEEBE & BOX ELDER,LOST CREEK,19,2,25,47
+!     2550 DATA LD3,8,PLUM,LITTLE DRY,CHERRY CREEK,COAL CREEK,RUNNING CREEK,KIOWA,WOLF,COMANCHE,54,13,49,36
+!     2560 DATA AR1,7,JARRE,PLUM,BEAR,S. PLATTE,BEEBE,BOX ELDER,LOST CREEK,20,2,55,45
+!     2570 DATA LF8,10,W. MONUMENT,DOUGLAS,MONUMENT,SHOOKS RUN,SAND,JIMMY CAMP,WILLIAMS,CHICO,BLACK SQUIRREL,POND,90,18,30,41
+!     2580 DATA DA1,5,EAST PLUM,COAL CREEK,KIOWA CREEK,CHERRY CREEK,RUNNING CREEK,58,16,30,29
+!     2590 DATA DA2,11,MONUMENT,EAST PLUM - w,EAST PLUM - e,WEST CHERRY,EAST CHERRY,CHERRY,KIOWA,KETTLE,SAND,BIG SANDY,BLACK SQUIRREL,78,17,25,30
+!     2591 DATA "LF4",3,"BEAR","PLATTE","WEST PLUM",54,6,40,40
+!     2592 DATA "LF6",4,"PLATTE","BOULDER CREEK","CLEAR CREEK","BEAR CREEK",1,1,57,28
+!     2593 DATA "LF1",4,"PLATTE","BOULDER CREEK","BOX ELDER","KIOWA-BIJOU",1,11,60,40
+!     2594 DATA "AR3",8,"MONUMENT","KETTLE","COTTONWOOD","SHOOKS RUN","SAND","JIMMY CAMP","BLACK SQUIRREL","WEST PLUM",60,9,55,38
+!     2595 DATA "AR4",8,"SAND","JIMMY CAMP","BLACK SQUIRREL","POND","STEELS FORK","HORSE CREEK","RUSH CREEK","BIG SANDY",72,29,43,45
+!     2596 DATA "AR2",5,"BEEBE","BOX ELDER","LOST CREEK","KIOWA COMANCHE WOLF","BIJOU",20,29,58,41
+!     2600 DATA "LF2",2,"KIOWA-BIJOU","SAN ARROYO",18,47,34,34
+!     2610 DATA "LF3",8,"POND","STEELS FORK","HORSE","RUSH","BIG SANDY","LITTLE HORSE","ADOBE","MUSTANG",60,50,60,35
+!     2611 DATA "AR10",8,"MONUMENT","KETTLE","COTTONWOOD","SHOOKS RUN","SAND","JIMMY CAMP","BLACK SQUIRREL","WEST PLUM",60,9,55,38
+      data modelshorts / "AR9",
+     1                   "DE8",
+     2                  "DE11",
+     3                   "LD2",
+     4                   "DE9",
+     5                  "DE10",
+     6                   "CW1",
+     7                   "LA1",
+     8                   "LD3",
+     9                   "AR1",
+     z                   "LF8",
+     1                   "DA1",
+     2                   "DA2",
+     3                   "LF4",
+     4                   "LF6",
+     5                   "LF1",
+     6                   "AR3",
+     7                   "AR4",
+     8                   "AR2",
+     9                   "LF2",
+     z                   "LF3",
+     1                  "AR10"/
+      data tnr         / 7,
+     1                  14,
+     2                  14,
+     3                   8,
+     4                   7,
+     5                   9,
+     6                  10,
+     7                   4,
+     8                   8,
+     9                   7,
+     z                  10,
+     1                   5,
+     2                  11,
+     3                   3,
+     4                   4,
+     5                   4,
+     6                   8,
+     7                   8,
+     8                   5,
+     9                   2,
+     z                   8,
+     1                   8/
+      data imin        /78,
+     1                  29,
+     2                  29,
+     3                  54,
+     4                  30,
+     5                  77,
+     6                  51,
+     7                  19,
+     8                  54,
+     9                  20,
+     z                  90,
+     1                  58,
+     2                  78,
+     3                  54,
+     4                   1,
+     5                   1,
+     6                  60,
+     7                  72,
+     8                  20,
+     9                  18,
+     z                  60,
+     1                  60/
+      data jmin        /17,
+     1                   2,
+     2                   2,
+     3                  13,
+     4                  30,
+     5                  15,
+     6                  16,
+     7                   2,
+     8                  13,
+     9                   2,
+     z                  18,
+     1                  16,
+     2                  17,
+     3                   6,
+     4                   1,
+     5                  11,
+     6                   9,
+     7                  29,
+     8                  29,
+     9                  47,
+     z                  50,
+     1                   9/
+      data nrow        /37,
+     1                  60,
+     2                  60,
+     3                  49,
+     4                  59,
+     5                  33,
+     6                  49,
+     7                  25,
+     8                  49,
+     9                  55,
+     z                  30,
+     1                  30,
+     2                  25,
+     3                  40,
+     4                  57,
+     5                  60,
+     6                  55,
+     7                  43,
+     8                  58,
+     9                  34,
+     z                  60,
+     1                  55/
+      data ncol        /36,
+     1                  40,
+     2                  40,
+     3                  36,
+     4                  31,
+     5                  48,
+     6                  36,
+     7                  47,
+     8                  36,
+     9                  45,
+     z                  41,
+     1                  29,
+     2                  30,
+     3                  40,
+     4                  28,
+     5                  40,
+     6                  38,
+     7                  45,
+     8                  41,
+     9                  34,
+     z                  35,
+     1                  38/
+
+      data rivnames /"MONUMENT","KETTLE","COTTONWOOD","SHOOKS RUN",
+     1 "SAND","JIMMY CAMP","BLACK SQUIRREL","","","","","","","","",
+     2"WEST PLUM","PLUM","LITTLE DRY","PLATTE","BEAR","CLEAR CREEK",
+     2"CHERRY CREEK","SAND CREEK","1st CREEK","2nd CREEK","3rd CREEK",
+     2"BEEBE SEEP","BOX ELDER","KIOWA","",
+     3"WEST PLUM","PLUM","LITTLE DRY","PLATTE","BEAR","CLEAR CREEK",
+     3"CHERRY CREEK","SAND CREEK","1st CREEK","2nd CREEK","3rd CREEK",
+     3"BEEBE SEEP","BOX ELDER","KIOWA","",
+     4"PLUM","LITTLE DRY","CHERRY CREEK","COAL CREEK","RUNNING CREEK",
+     4"KIOWA","WOLF","COMANCHE","","","","","","","",
+     5"SAND CREEK","1st CREEK","3rd CREEK","BOX ELDER","LOST CREEK",
+     5"KIOWA COMANCHE & WOLF","BIJOU","","","","","","","","",
+     6"BIJOU","BIG SANDY","MONUMENT","COTTONWOOD","SHOOKS RUN",
+     6"SAND CREEK","BLACK SQUIRREL","STEELS FORK","HORSE CREEK",
+     6"","","","","","",
+     7"MONUMENT","EAST PLUM - w","EAST PLUM - e","WEST CHERRY",
+     7"EAST CHERRY","CHERRY","KIOWA","KETTLE","SAND","BIG SANDY",
+     7"","","","","",
+     8"BIG DRY","S. PLATTE","BEEBE & BOX ELDER","LOST CREEK",
+     8"","","","","","","","","","","",
+     9"PLUM","LITTLE DRY","CHERRY CREEK","COAL CREEK","RUNNING CREEK",
+     9"KIOWA","WOLF","COMANCHE","","","","","","","",
+     z"JARRE","PLUM","BEAR","S. PLATTE","BEEBE","BOX ELDER",
+     z"LOST CREEK","","","","","","","","",
+     1"W. MONUMENT","DOUGLAS","MONUMENT","SHOOKS RUN","SAND",
+     1"JIMMY CAMP","WILLIAMS","CHICO","BLACK SQUIRREL","POND",
+     1"","","","","",
+     2"EAST PLUM","COAL CREEK","KIOWA CREEK","CHERRY CREEK",
+     2"RUNNING CREEK","","","","","","","","","","",
+     3"MONUMENT","EAST PLUM - w","EAST PLUM - e","WEST CHERRY",
+     3"EAST CHERRY","CHERRY","KIOWA","KETTLE","SAND","BIG SANDY",
+     3"BLACK SQUIRREL","","","","",
+     4"BEAR","PLATTE","WEST PLUM","","","","","","","","","","","","",
+     5"PLATTE","BOULDER CREEK","CLEAR CREEK","BEAR CREEK",
+     5"","","","","","","","","","","",
+     6"PLATTE","BOULDER CREEK","BOX ELDER","KIOWA-BIJOU",
+     6"","","","","","","","","","","",
+     7"MONUMENT","KETTLE","COTTONWOOD","SHOOKS RUN","SAND","JIMMY CAMP",
+     7"BLACK SQUIRREL","WEST PLUM","","","","","","","",
+     8"SAND","JIMMY CAMP","BLACK SQUIRREL","POND","STEELS FORK",
+     8"HORSE CREEK","RUSH CREEK","BIG SANDY","","","","","","","",
+     9"BEEBE","BOX ELDER","LOST CREEK","KIOWA COMANCHE WOLF","BIJOU",
+     9"","","","","","","","","","",
+     z"KIOWA-BIJOU","SAN ARROYO","","","","","","","","","","","","","",
+     1"POND","STEELS FORK","HORSE","RUSH","BIG SANDY","LITTLE HORSE",
+     1"ADOBE","MUSTANG","","","","","","","",
+     2"MONUMENT","KETTLE","COTTONWOOD","SHOOKS RUN","SAND","JIMMY CAMP",
+     2"BLACK SQUIRREL","WEST PLUM","","","","","","",""/
+c _________________________________________________________
 c     debugging output of flags and unit numbers
       if (debug_log) write(nlog,*) "arg4 debug: nlog",nlog
       if (debug_log) write(nlog,*) "arg4 debug: incli",incli
@@ -185,15 +397,15 @@ c     user selected options from menu
           goto 130
         case (2) ! unused
           goto 140
-        case (3)
+        case (3) ! unused
           goto 150
-        case (4)
+        case (4) ! unused
           goto 160
-        case (5)
+        case (5) ! unused
           goto 160
-        case (6)
+        case (6) ! exit aug4
           goto 170
-        case default
+        case default ! invalid selection, try again
           goto 165
       end select
 
@@ -206,7 +418,7 @@ c     Option 1 - build tape9 input file
       if (debug_log) then
         write(nlog,*)"arg4 debug: option 1 selected - tape9 build"
       endif
-c      call optionone
+      call createtape9
       goto 166
 c ______________________________________________________________________
 c     Option Two
@@ -540,6 +752,7 @@ c     read the "junk" file containing run parameters
      1        "arg4 debug: readjunkfile: ",nts(i),tsmult(i),perlen(i)
             endif
           end do
+          ! done reading junk file
           close(njunk)
           ! compare the given run id against the one in the junk file
           if (trim(rnns).eq.trim(rns)) then
@@ -567,6 +780,7 @@ c     read the "junk" file containing run parameters
      1            "arg4 debug: readjunkfile: aqshort,aqname ",
      2            aqshort," ",aqnam
                 endif
+                ! 
                 return
               endif
             end do
@@ -1278,5 +1492,76 @@ c     subroutine 3270
      1    "section,township,itownship,ctownship,range,code,II,JJ",
      2    section,township,itownship,ctownship,range,code,II,JJ
         endif
+        return
+      end
+c _________________________________________________________
+c     create tape9.dat (well) data file
+!     280 REM        ASSEMBLE WELL PKG. ON TAPE9.DAT
+!     290 REM ***********************************************************************
+!     300 CLS
+!     310 RESTORE 330
+!     320 READ TN$,NA$,A1$,A2$
+!     330 DATA "9","WELL","  YIELD (gpm)"," + for pumping     WELL LOCATION"
+!     340 REM PRINT "SELECT UNITS FOR WELL YIELD:";TAB(2);"1) gpm";TAB(2);"2) cfs";TAB(2);"3) acre-feet/year"
+!     350 REM INPUT "         enter appropriate line number    ";QSELECT
+!     351 QSELECT=3
+!     360 IF QSELECT=1 THEN FAC=-1/448
+!     370 IF QSELECT=2 THEN FAC=-1:A1$="  YIELD (cfs)"
+!     380 IF QSELECT=3 THEN FAC=-(5280^2)/(640*1440*60*365.25):A1$="YIELD (af/yr)"
+!     400 RESTORE 2480
+!     410 READ A$,TNR
+!     420 FOR X=1 TO TNR
+!     430 READ B$
+!     440 NEXT X
+!     450 READ IMIN,JMIN,NROW,NCOL
+!     460 IF A$<>SHORT$ GOTO 410
+!     470 A2$="  #   LAY     ROW       COL   "+A2$
+!     480 NAM$="TAPE"+TN$+".DAT"
+!     510 NAM$=DD1$+NAM$
+!     520 OPEN "O",#1,NAM$
+!     540 NUT$="N"
+!     550 ICB=0
+!     560 IF NUT$="Y" THEN ICB=-1
+!     570 PRINT "ENTER MAX. NUMBER OF ";NA$;"'S   ";
+!     580 INPUT "",MX
+!     590 PRINT#1,USING"##########";MX;ICB
+!     610 FOR XY=1 TO NSP
+!     620 PRINT "ENTER NUMBER OF ";NA$;"'S FOR STRESS PERIOD #";XY:PRINT
+!     630 INPUT "",ITMP
+!     640 PRINT#1,USING"##########";ITMP
+!     650 CLS
+!     660 PRINT "WELL  ";A1$;"     LOCATION (Ex:  5,3N,64)"
+!     670 FOR K=1 TO ITMP
+!     680 PRINT K;TAB(10);
+!     690 INPUT ;"",Q
+!     700 PRINT TAB(25);
+!     710 INPUT "";SCTN,TWP$,RNG
+!     720 GOSUB 3270
+!     730 I=I-IMIN+1
+!     740 J=J-JMIN+1
+!     741 PRINT I;" and"J;" has been selected for Row Number and Column Number"
+!     742 PRINT 
+!     750 PRINT#1,USING"##########";1;I;J;:PRINT#1,USING"###.######";Q*FAC;:PRINT#1,TAB(51);"SEC";SCTN;"T";TWP$;" R";MID$(STR$(RNG),2);"W"
+!     760 NEXT K
+!     770 NEXT XY
+!     780 CLOSE#1
+!     781 OPEN "I",#1,"TAPE9.DAT":OPEN "O",#2,"TAPE9."+RN$
+!     782 LINE INPUT#1,A$
+!     783 PRINT#2,A$
+!     784 GOTO 782
+!     790 GOTO 230
+      subroutine createtape9()
+      IMPLICIT NONE
+        include 'aug4_common2.inc'
+        include 'aug4_common3.inc'
+        ! local variables
+        integer qselect
+
+        qselect = 3
+        if (qselect.eq.3) then
+          fac = -(5280.0**2)/(640.0*1440.0*60.0*365.25)
+          a1s = "YIELD (af/yr)"
+        endif
+
         return
       end
