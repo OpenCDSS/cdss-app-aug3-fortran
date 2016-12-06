@@ -41,10 +41,15 @@ c     Local variables
       data nlog       /13/
       data outcli     /6/
       data incli      /5/
+      data t9unit1    /14/
+      data t9unit2    /15/
+      data t1unit1    /16/
+      data t1unit2    /17/
       data debug_cli  /.TRUE./ !turn this off in production
       data debug_log  /.TRUE./ !turn this off in production
       !     5020 DD1$="C:\AUG3\"
-      data dd1s       /'/home/jim/workspaces/dwr_aug3_scripts'/
+      data dirsep     /'/'/
+      data dd1s       /'/home/jim/workspaces/dwr_aug3_scripts/'/
 c _________________________________________________________
 c     set the default run id
       data rnns      /'R1'/
@@ -130,6 +135,8 @@ c     tape9 data
 !     2600 DATA "LF2",2,"KIOWA-BIJOU","SAN ARROYO",18,47,34,34
 !     2610 DATA "LF3",8,"POND","STEELS FORK","HORSE","RUSH","BIG SANDY","LITTLE HORSE","ADOBE","MUSTANG",60,50,60,35
 !     2611 DATA "AR10",8,"MONUMENT","KETTLE","COTTONWOOD","SHOOKS RUN","SAND","JIMMY CAMP","BLACK SQUIRREL","WEST PLUM",60,9,55,38
+      data modelcountmax /22/
+      data rivercountmax /15/
       data modelshorts / "AR9",
      1                   "DE8",
      2                  "DE11",
@@ -152,7 +159,7 @@ c     tape9 data
      9                   "LF2",
      z                   "LF3",
      1                  "AR10"/
-      data tnr         / 7,
+      data tnrs        / 7,
      1                  14,
      2                  14,
      3                   8,
@@ -174,7 +181,7 @@ c     tape9 data
      9                   2,
      z                   8,
      1                   8/
-      data imin        /78,
+      data imins       /78,
      1                  29,
      2                  29,
      3                  54,
@@ -196,7 +203,7 @@ c     tape9 data
      9                  18,
      z                  60,
      1                  60/
-      data jmin        /17,
+      data jmins       /17,
      1                   2,
      2                   2,
      3                  13,
@@ -218,7 +225,7 @@ c     tape9 data
      9                  47,
      z                  50,
      1                   9/
-      data nrow        /37,
+      data nrows       /37,
      1                  60,
      2                  60,
      3                  49,
@@ -240,7 +247,7 @@ c     tape9 data
      9                  34,
      z                  60,
      1                  55/
-      data ncol        /36,
+      data ncols       /36,
      1                  40,
      2                  40,
      3                  36,
@@ -311,6 +318,12 @@ c     tape9 data
      1"ADOBE","MUSTANG","","","","","","","",
      2"MONUMENT","KETTLE","COTTONWOOD","SHOOKS RUN","SAND","JIMMY CAMP",
      2"BLACK SQUIRREL","WEST PLUM","","","","","","",""/
+      !write(outcli,*) "arg4 debug: rivnames(1,1)",rivnames(1,1)
+      !write(outcli,*) "arg4 debug: rivnames(3,6)",rivnames(3,6)
+      !write(outcli,*) "arg4 debug: rivnames(2,18)",rivnames(2,18)
+      !write(outcli,*) "arg4 debug: rivnames(1,22)",rivnames(1,22)
+      !write(outcli,*) "arg4 debug: rivnames(15,22)",rivnames(15,22)
+      !stop
 c _________________________________________________________
 c     debugging output of flags and unit numbers
       if (debug_log) write(nlog,*) "arg4 debug: nlog",nlog
@@ -672,7 +685,7 @@ c     read the "junk" file containing run parameters
         include 'aug4_common3.inc'
         ! local variables
         character(len=48) :: junkfilename, trimmed
-        character(len=127) :: fileline
+        character(len=128) :: fileline
         logical file_exists, runid_match
         integer i
 
@@ -704,7 +717,7 @@ c     read the "junk" file containing run parameters
             write(nlog,*)
      1      "arg4 debug: readjunkfile: nsp ",nsp
           endif
-          read(njunk,*)fileline
+          read(njunk,'(A128)')fileline
           trimmed=trim(fileline)
           shorts=trimmed(1:2)
           if (debug_cli) then
@@ -906,7 +919,11 @@ c     subroutine 5000
         include 'aug4_common3.inc'
         ! local variables
         character(len=48) :: junkfilename, userinput
-        integer iperlen, sp
+        integer iperlen, sp, mdlidlen
+        character(len=4) :: subdirname
+        character(len=24) :: filename
+        character(len=96) :: fullfilename
+        character(len=128) :: fileline
 
         !select model parameters
         if (debug_cli) then
@@ -995,6 +1012,44 @@ c     subroutine 5000
           write(njunk,*)nts(sp),tsmult(sp),perlen(sp)
         end do
         close(njunk)
+!     make a copy of TAPE1.DAT
+!     5171 L=LEN(SHORT$)
+!     5172 IF L=3 THEN SDIR$=MID$(SHORT$,1,2)+"0"+MID$(SHORT$,3,1) ELSE SDIR$=SHORT$
+!     5173 OPEN "I",#1,"C:\AUG3\"+SDIR$+"\TAPE1.SAV"
+!     5174 OPEN "O",#2,"C:\AUG3\"+SDIR$+"\TAPE1.DAT"
+!     5175 FOR X=1 TO 2
+!     5176 LINE INPUT#1,A$
+!     5177 PRINT#2,A$
+!     5178 NEXT X
+!     5179 INPUT#1,K1,K2,K3,K4,K5
+!     5180 PRINT#2,USING"##########";K1;K2;K3;NSP;K5
+!     5181 LINE INPUT#1,A$
+!     5182 IF MID$(A$,1,10)<>"3155760000" THEN PRINT#2,A$:GOTO 5181
+!     5183 FOR X=1 TO NSP
+!     5184 PRINT#2,USING"##########";PERLEN(X)*1440*365.25*60;NTS(X);:PRINT#2,USING"#####.####";TSMULT(X)
+!     5185 NEXT X
+!     5186 CLOSE#1:CLOSE#2
+!     5187 RETURN
+        mdlidlen = len(modelshort)
+        select case (mdlidlen)
+          case (3)
+            subdirname = modelshort(1:2)//"0"//modelshort(3:3)
+          case default
+            subdirname = modelshort
+        end select
+        filename = "TAPE1.SAV"
+        fullfilename = trim(dd1s)//subdirname//dirsep//trim(filename)
+        open(t1unit1,file=trim(fullfilename), status='old')
+        filename = "TAPE1.DAT"
+        fullfilename = trim(dd1s)//subdirname//dirsep//trim(filename)
+        open(t1unit2,file=trim(fullfilename), status='unknown')
+        do
+          read(t1unit1,'(A128)',end=500,err=500)fileline
+          write(t1unit2,*,err=500)trim(fileline)
+        end do
+ 500    continue
+        close(t1unit1)
+        close(t1unit2)
         return
       end
 c _______________________________________________________
@@ -1142,6 +1197,7 @@ c     select the well location
         ! local variables
         logical locationok
         character(len=127) :: readline
+        character(len=24) :: rawtownship, trimtownship
 
         if (debug_cli) then
           write(outcli,*)"arg4 debug: selectwelllocation: start"
@@ -1153,7 +1209,9 @@ c     select the well location
         write(outcli,*)"Enter the well location (e.g. 13,5N,64): "
         !read (incli,'(A127)',err=98) readline
         !read (readline,*,err=98) section, township, range
-        read (incli,*,err=98) section, township, range
+        read (incli,*,err=98) section, rawtownship, range
+          trimtownship=trim(rawtownship)
+          township=trimtownship(1:2)
           if (debug_cli) then
             write(outcli,*)
      1      "arg4 debug: selectwelllocation: section, township, range ",
@@ -1164,7 +1222,7 @@ c     select the well location
      1      "arg4 debug: selectwelllocation: section, township, range ",
      2      section, township, range
           endif
-        if (section.gt.sectionmin.and.section.le.sectionmax) then
+        if (section.ge.sectionmin.and.section.le.sectionmax) then
           if (range.ge.rangemin.and.range.le.rangemax) then
             read(township,'(I1)')itownship
             !read(township,'(1x,A1)')ctownship
@@ -1273,7 +1331,7 @@ c     select a model based on the aquifer and well location
         include 'aug4_common2.inc'
         include 'aug4_common3.inc'
         ! local variables
-        character (len=99) nuts
+        character(len=99) :: nuts
 
         if (debug_cli) then
           write(outcli,*)"arg4 debug: assignmodel: start"
@@ -1555,13 +1613,217 @@ c     create tape9.dat (well) data file
         include 'aug4_common2.inc'
         include 'aug4_common3.inc'
         ! local variables
-        integer qselect
+        integer qselect, aqlayer, i, j, modelcount, icb, mx, xy, k, itmp
+        character(len=1) :: nuts
+        character(len=24) :: rawtownship, trimtownship
+        character(len=24) :: filename
+        character(len=96) :: header, fullfilename
+        character(len=128) :: fileline
+        real q
+        data aqlayer /1/
 
+        write(outcli,*)
+        write(outcli,*)"Tape 9 (well package) parameters "
+ 101    write(outcli,*)"  SELECT UNITS FOR WELL YIELD:"
+        !write(outcli,*)"  1. gpm"
+        !write(outcli,*)"  2. cfs"
+        !write(outcli,*)"  3. acre-feet/year"
+        write(outcli,*)"    AUG4 is configured to use acre-feet/year."
+ 102    continue
+c        read (incli,*,err=199) qselect
         qselect = 3
-        if (qselect.eq.3) then
-          fac = -(5280.0**2)/(640.0*1440.0*60.0*365.25)
-          a1s = "YIELD (af/yr)"
+        select case (qselect)
+          case (1)
+            fac = -1.0/448.0
+          case (2)
+            fac = -1.0
+            a1s = "  YIELD (cfs)"
+          case (3)
+            fac = -(5280.0**2)/(640.0*1440.0*60.0*365.25)
+            a1s = "YIELD (af/yr)"
+          case default
+ 199        write(outcli,*)"    Invalid selection. Enter 1,2,3"
+            goto 102
+        end select
+c       match model short name
+        modelcount = 0
+        imin = 0
+        jmin = 0
+        nrow = 0
+        ncol = 0
+        do i=1,modelcountmax
+          if(modelshort.eq.modelshorts(i)) then
+            modelcount = i
+            imin = imins(i)
+            jmin = jmins(i)
+            nrow = nrows(i)
+            ncol = ncols(i)
+          end if
+        end do
+c       create the data file
+        header = "  #   LAY     ROW       COL   "//a2s
+        filename = "TAPE"//tns//".DAT"
+        fullfilename = trim(dd1s)//trim(filename)
+        open(t9unit1,file=trim(fullfilename), status='unknown')
+        nuts = "N"
+        icb = 0
+        if (nuts.eq."Y") icb = -1
+        write(outcli,*)
+ 201    write(outcli,*)"  ENTER MAX. NUMBER OF "//nas//"S:   "
+ 202    continue
+        read (incli,*,err=299) mx
+        if (mx.ge.1) then
+          write(t9unit1,203)mx,icb
+ 203      format(I10,I10)         
+          goto 300
         endif
+ 299    write(outcli,*)
+     1  "    Invalid value. Enter a number greater than 0:"
+        goto 202
+ 300    continue
+c       well pumping and locations
+        do xy=1,nsp
+          write(outcli,*)
+ 301      write(outcli,304)nas,xy
+ 304      format("  ENTER NUMBER OF ",A4,"S FOR STRESS PERIOD #",I3)
+ 302      continue
+          read (incli,*,err=399) itmp
+          if (itmp.ge.0) then
+            write (t9unit1,303) itmp
+ 303        format(I10)
+            write(outcli,305)nas,a1s
+ 305        format(4X,"FOR EACH ",A4," ENTER ",A13,
+     1             " AND LOCATION (Ex:  5,3N,64)")
+            do k=1,itmp
+ 306          write(outcli,307)nas,k
+ 307          format(6X,A4,1X,I2,1X,"Q:")
+              read (incli,*,err=398) q
+              goto 309
+ 398          write(outcli,*)
+     1        "    Invalid value. Enter a number:"
+              goto 306
+ 309          continue
 
+ 310          write(outcli,311)nas,k
+ 311          format(6X,A4,1X,I2,1X,"LOCATION:")
+              read (incli,*,err=397) section,rawtownship,range
+              trimtownship=trim(rawtownship)
+              township=trimtownship(1:2)
+c_______________________________________________________________________              
+c             check the values, then check the location
+
+        if (section.ge.sectionmin.and.section.le.sectionmax) then
+          if (range.ge.rangemin.and.range.le.rangemax) then
+            read(township,'(I1)')itownship
+            !read(township,'(1x,A1)')ctownship
+            !itownship = township[1:1]
+            ctownship = township(2:2)
+            if (debug_cli) then
+              write(outcli,*)
+     1        "arg4 debug: createtape9: itownship, ctownship",
+     2        itownship, ctownship
+            endif
+            if (debug_log) then
+              write(nlog,*)
+     1        "arg4 debug: createtape9: itownship, ctownship",
+     2        itownship, ctownship
+            endif
+           if(itownship.ge.townshipmin.and.itownship.le.townshipmax)then
+              call checkwelllocation
+              if (code.gt.0) then
+c               !!SUCCESS!!
+                if (debug_cli) then
+                  write(outcli,*)"Code =",code
+                endif
+                if (debug_log) then
+                  write(nlog,*)"Code =",code
+                endif
+c               730 I=I-IMIN+1
+c               740 J=J-JMIN+1
+                i = II - imin + 1
+                j = JJ - jmin + 1
+                write(outcli,313)i,j
+ 313            format(8x,"That location puts well in model row ",I4,
+     1                     " and column ",I4)
+!     750 PRINT#1,USING"##########";1;I;J;:PRINT#1,USING"###.######";Q*FAC;:PRINT#1,TAB(51);"SEC";SCTN;"T";TWP$;" R";MID$(STR$(RNG),2);"W"
+                write (t9unit1,314)aqlayer,i,j,q*fac,
+     1                                section,township,range
+ 314      format(I10,I10,I10,F10.6,10X,"SEC",I3,1X,"T",A2,1X,"R",I2,"W")
+                if (debug_cli) then
+                  write (outcli,314)aqlayer,i,j,q*fac,
+     1                                  section,township,range
+                endif
+                if (debug_log) then
+                  write (nlog,314)aqlayer,i,j,q*fac,
+     1                                  section,township,range
+                endif
+                goto 312
+              else
+                write(outcli,*)"Invalid location (",
+     1          section, township, range,") Try again"
+                if (debug_cli) then
+                  write(outcli,*)"arg4 debug: createtape9: ",
+     1            "section,township,range,code,II,JJ",
+     2            section,township,range,code,II,JJ
+                endif
+                if (debug_log) then
+                  write(nlog,*)"arg4 debug: createtape9: ",
+     1            "section,township,range,code,II,JJ",
+     2            section,township,range,code,II,JJ
+                endif
+                goto 310
+              endif
+            else
+              write(outcli,*)"Invalid township (",township,") Try again"
+              if (debug_cli) then
+                write(outcli,*)
+     1        "Invalid township entered = township,itownship,ctownship",
+     2          township, itownship, ctownship
+                write(outcli,*)"  townshipmin,townshipmax ",
+     1          townshipmin, townshipmax
+              endif
+              if (debug_log) then
+                write(nlog,*)
+     1        "Invalid township entered = township,itownship,ctownship",
+     2          township, itownship, ctownship
+                write(nlog,*)"  townshipmin,townshipmax ",
+     1          townshipmin, townshipmax
+              endif
+              goto 310
+            endif
+          else
+            write(outcli,*)"Invalid range entered = ", range
+            goto 310
+          endif
+        else
+          write(outcli,*)"Invalid section entered = ", section
+          goto 310
+        endif
+c_______________________________________________________________________
+ 397          write(outcli,*)
+     1        "    Invalid location value. (Ex:  5,3N,64)"
+              goto 310
+ 312          continue
+            end do
+            !finished
+            goto 400
+          endif
+ 399      write(outcli,*)
+     1    "    Invalid value. Enter a number 0 or greater:"
+          goto 302
+ 400      continue
+        end do
+        close (t9unit1)
+        open(t9unit1,file=trim(fullfilename), status='old')
+        filename = "TAPE"//tns//"."//rns
+        fullfilename = trim(dd1s)//trim(filename)
+        open(t9unit2,file=trim(fullfilename), status='unknown')
+        do
+          read(t9unit1,'(A128)',end=500,err=500)fileline
+          write(t9unit2,*,err=500)trim(fileline)
+        end do
+ 500    continue
+        close(t9unit1)
+        close(t9unit2)
         return
       end

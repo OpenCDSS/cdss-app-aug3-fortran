@@ -34,60 +34,61 @@
 !  + aug4                  263 IF OSELECT=3 OR OSELECT=4 THEN CHAIN "C:AUG3MOD1.BAS"
 !  + aug4                  264 IF OSELECT=5 THEN CHAIN "C:AUG3MOD2.BAS"
 !  + aug4                  270 GOTO 50
-!                          280 REM        ASSEMBLE WELL PKG. ON TAPE9.DAT
-!                          290 REM ***********************************************************************
-!                          300 CLS
-!                          310 RESTORE 330
-!                          320 READ TN$,NA$,A1$,A2$
-!                          330 DATA "9","WELL","  YIELD (gpm)"," + for pumping     WELL LOCATION"
-!                          340 REM PRINT "SELECT UNITS FOR WELL YIELD:";TAB(2);"1) gpm";TAB(2);"2) cfs";TAB(2);"3) acre-feet/year"
-!                          350 REM INPUT "         enter appropriate line number    ";QSELECT
-!                          351 QSELECT=3
-!                          360 IF QSELECT=1 THEN FAC=-1/448
-!                          370 IF QSELECT=2 THEN FAC=-1:A1$="  YIELD (cfs)"
-!                          380 IF QSELECT=3 THEN FAC=-(5280^2)/(640*1440*60*365.25):A1$="YIELD (af/yr)"
-!                          400 RESTORE 2480
-!                          410 READ A$,TNR
-!                          420 FOR X=1 TO TNR
-!                          430 READ B$
-!                          440 NEXT X
-!                          450 READ IMIN,JMIN,NROW,NCOL
-!                          460 IF A$<>SHORT$ GOTO 410
-!                          470 A2$="  #   LAY     ROW       COL   "+A2$
-!                          480 NAM$="TAPE"+TN$+".DAT"
-!                          510 NAM$=DD1$+NAM$
-!                          520 OPEN "O",#1,NAM$
-!                          540 NUT$="N"
-!                          550 ICB=0
-!                          560 IF NUT$="Y" THEN ICB=-1
-!                          570 PRINT "ENTER MAX. NUMBER OF ";NA$;"'S   ";
-!                          580 INPUT "",MX
-!                          590 PRINT#1,USING"##########";MX;ICB
-!                          610 FOR XY=1 TO NSP
-!                          620 PRINT "ENTER NUMBER OF ";NA$;"'S FOR STRESS PERIOD #";XY:PRINT
-!                          630 INPUT "",ITMP
-!                          640 PRINT#1,USING"##########";ITMP
-!                          650 CLS
-!                          660 PRINT "WELL  ";A1$;"     LOCATION (Ex:  5,3N,64)"
-!                          670 FOR K=1 TO ITMP
-!                          680 PRINT K;TAB(10);
-!                          690 INPUT ;"",Q
-!                          700 PRINT TAB(25);
-!                          710 INPUT "";SCTN,TWP$,RNG
-!                          720 GOSUB 3270
-!                          730 I=I-IMIN+1
-!                          740 J=J-JMIN+1
-!                          741 PRINT I;" and"J;" has been selected for Row Number and Column Number"
-!                          742 PRINT 
-!                          750 PRINT#1,USING"##########";1;I;J;:PRINT#1,USING"###.######";Q*FAC;:PRINT#1,TAB(51);"SEC";SCTN;"T";TWP$;" R";MID$(STR$(RNG),2);"W"
-!                          760 NEXT K
-!                          770 NEXT XY
-!                          780 CLOSE#1
-!                          781 OPEN "I",#1,"TAPE9.DAT":OPEN "O",#2,"TAPE9."+RN$
-!                          782 LINE INPUT#1,A$
-!                          783 PRINT#2,A$
-!                          784 GOTO 782
-!                          790 GOTO 230
+
+!  + createtape9           280 REM        ASSEMBLE WELL PKG. ON TAPE9.DAT
+!  + createtape9           290 REM ***********************************************************************
+!  + createtape9           300 CLS
+!  + createtape9           310 RESTORE 330
+!  + createtape9           320 READ TN$,NA$,A1$,A2$
+!  + createtape9           330 DATA "9","WELL","  YIELD (gpm)"," + for pumping     WELL LOCATION"
+!  + createtape9           340 REM PRINT "SELECT UNITS FOR WELL YIELD:";TAB(2);"1) gpm";TAB(2);"2) cfs";TAB(2);"3) acre-feet/year"
+!  + createtape9           350 REM INPUT "         enter appropriate line number    ";QSELECT
+!  + createtape9           351 QSELECT=3
+!  + createtape9           360 IF QSELECT=1 THEN FAC=-1/448
+!  + createtape9           370 IF QSELECT=2 THEN FAC=-1:A1$="  YIELD (cfs)"
+!  + createtape9           380 IF QSELECT=3 THEN FAC=-(5280^2)/(640*1440*60*365.25):A1$="YIELD (af/yr)"
+!  + createtape9           400 RESTORE 2480
+!  + createtape9           410 READ A$,TNR
+!  + createtape9           420 FOR X=1 TO TNR
+!  + createtape9           430 READ B$
+!  + createtape9           440 NEXT X
+!  + createtape9           450 READ IMIN,JMIN,NROW,NCOL
+!  + createtape9           460 IF A$<>SHORT$ GOTO 410
+!  + createtape9           470 A2$="  #   LAY     ROW       COL   "+A2$
+!  + createtape9           480 NAM$="TAPE"+TN$+".DAT"
+!  + createtape9           510 NAM$=DD1$+NAM$
+!  + createtape9           520 OPEN "O",#1,NAM$
+!  + createtape9           540 NUT$="N"
+!  + createtape9           550 ICB=0
+!  + createtape9           560 IF NUT$="Y" THEN ICB=-1
+!  + createtape9           570 PRINT "ENTER MAX. NUMBER OF ";NA$;"'S   ";
+!  + createtape9           580 INPUT "",MX
+!  + createtape9           590 PRINT#1,USING"##########";MX;ICB
+!  + createtape9           610 FOR XY=1 TO NSP
+!  + createtape9           620 PRINT "ENTER NUMBER OF ";NA$;"'S FOR STRESS PERIOD #";XY:PRINT
+!  + createtape9           630 INPUT "",ITMP
+!  + createtape9           640 PRINT#1,USING"##########";ITMP
+!  + createtape9           650 CLS
+!  + createtape9           660 PRINT "WELL  ";A1$;"     LOCATION (Ex:  5,3N,64)"
+!  + createtape9           670 FOR K=1 TO ITMP
+!  + createtape9           680 PRINT K;TAB(10);
+!  + createtape9           690 INPUT ;"",Q
+!  + createtape9           700 PRINT TAB(25);
+!  + createtape9           710 INPUT "";SCTN,TWP$,RNG
+!  + createtape9           720 GOSUB 3270
+!  + createtape9           730 I=I-IMIN+1
+!  + createtape9           740 J=J-JMIN+1
+!  + createtape9           741 PRINT I;" and"J;" has been selected for Row Number and Column Number"
+!  + createtape9           742 PRINT 
+!  + createtape9           750 PRINT#1,USING"##########";1;I;J;:PRINT#1,USING"###.######";Q*FAC;:PRINT#1,TAB(51);"SEC";SCTN;"T";TWP$;" R";MID$(STR$(RNG),2);"W"
+!  + createtape9           760 NEXT K
+!  + createtape9           770 NEXT XY
+!  + createtape9           780 CLOSE#1
+!  + createtape9           781 OPEN "I",#1,"TAPE9.DAT":OPEN "O",#2,"TAPE9."+RN$
+!  + createtape9           782 LINE INPUT#1,A$
+!  + createtape9           783 PRINT#2,A$
+!  + createtape9           784 GOTO 782
+!  + createtape9           790 GOTO 230
 
 !                          800 DIM DELT(201)
 !                          810 WIDTH "LPT1:",230
@@ -247,32 +248,32 @@
 !                          2466 GOTO 2464
 !                          2470 GOTO 230
 
-!                          2480 DATA "AR9",7,MONUMENT,KETTLE,COTTONWOOD,SHOOKS RUN,SAND,JIMMY CAMP,BLACK SQUIRREL,78,17,37,36
-!                          2490 DATA DE8,14,WEST PLUM,PLUM,LITTLE DRY,PLATTE,BEAR,CLEAR CREEK,CHERRY CREEK,SAND CREEK,1st CREEK,2nd CREEK,3rd CREEK,BEEBE SEEP,BOX ELDER,KIOWA,29,2,60,40
-!                          2495 DATA DE11,14,WEST PLUM,PLUM,LITTLE DRY,PLATTE,BEAR,CLEAR CREEK,CHERRY CREEK,SAND CREEK,1st CREEK,2nd CREEK,3rd CREEK,BEEBE SEEP,BOX ELDER,KIOWA,29,2,60,40
-!                          2500 DATA LD2,8,PLUM,LITTLE DRY,CHERRY CREEK,COAL CREEK,RUNNING CREEK,KIOWA,WOLF,COMANCHE,54,13,49,36
-!                          2510 DATA DE9,7,SAND CREEK,1st CREEK,3rd CREEK,BOX ELDER,LOST CREEK,KIOWA COMANCHE & WOLF,BIJOU,30,30,59,31
-!                          2520 DATA DE10,9,BIJOU,BIG SANDY,MONUMENT,COTTONWOOD,SHOOKS RUN,SAND CREEK,BLACK SQUIRREL,STEELS FORK,HORSE CREEK,77,15,33,48
-!                          2530 DATA CW1,10,MONUMENT,EAST PLUM - w,EAST PLUM - e,WEST CHERRY,EAST CHERRY,CHERRY,KIOWA,KETTLE,SAND,BIG SANDY,51,16,49,36
-!                          2540 DATA LA1,4,BIG DRY,S. PLATTE,BEEBE & BOX ELDER,LOST CREEK,19,2,25,47
-!                          2550 DATA LD3,8,PLUM,LITTLE DRY,CHERRY CREEK,COAL CREEK,RUNNING CREEK,KIOWA,WOLF,COMANCHE,54,13,49,36
-!                          2560 DATA AR1,7,JARRE,PLUM,BEAR,S. PLATTE,BEEBE,BOX ELDER,LOST CREEK,20,2,55,45
-!                          2570 DATA LF8,10,W. MONUMENT,DOUGLAS,MONUMENT,SHOOKS RUN,SAND,JIMMY CAMP,WILLIAMS,CHICO,BLACK SQUIRREL,POND,90,18,30,41
-!                          2580 DATA DA1,5,EAST PLUM,COAL CREEK,KIOWA CREEK,CHERRY CREEK,RUNNING CREEK,58,16,30,29
-!                          2590 DATA DA2,11,MONUMENT,EAST PLUM - w,EAST PLUM - e,WEST CHERRY,EAST CHERRY,CHERRY,KIOWA,KETTLE,SAND,BIG SANDY,BLACK SQUIRREL,78,17,25,30
-!                          2591 DATA "LF4",3,"BEAR","PLATTE","WEST PLUM",54,6,40,40
-!                          2592 DATA "LF6",4,"PLATTE","BOULDER CREEK","CLEAR CREEK","BEAR CREEK",1,1,57,28
-!                          2593 DATA "LF1",4,"PLATTE","BOULDER CREEK","BOX ELDER","KIOWA-BIJOU",1,11,60,40
-!                          2594 DATA "AR3",8,"MONUMENT","KETTLE","COTTONWOOD","SHOOKS RUN","SAND","JIMMY CAMP","BLACK SQUIRREL","WEST PLUM",60,9,55,38
-!                          2595 DATA "AR4",8,"SAND","JIMMY CAMP","BLACK SQUIRREL","POND","STEELS FORK","HORSE CREEK","RUSH CREEK","BIG SANDY",72,29,43,45
-!                          2596 DATA "AR2",5,"BEEBE","BOX ELDER","LOST CREEK","KIOWA COMANCHE WOLF","BIJOU",20,29,58,41
-!                          2600 DATA "LF2",2,"KIOWA-BIJOU","SAN ARROYO",18,47,34,34
-!                          2610 DATA "LF3",8,"POND","STEELS FORK","HORSE","RUSH","BIG SANDY","LITTLE HORSE","ADOBE","MUSTANG",60,50,60,35
-!                          2611 DATA "AR10",8,"MONUMENT","KETTLE","COTTONWOOD","SHOOKS RUN","SAND","JIMMY CAMP","BLACK SQUIRREL","WEST PLUM",60,9,55,38
-!                          2620 'DATA
-!                          2630 'DATA
-!                          2640 'DATA
-!                          2650 DATA END
+!  + aug4                  2480 DATA "AR9",7,MONUMENT,KETTLE,COTTONWOOD,SHOOKS RUN,SAND,JIMMY CAMP,BLACK SQUIRREL,78,17,37,36
+!  + aug4                  2490 DATA DE8,14,WEST PLUM,PLUM,LITTLE DRY,PLATTE,BEAR,CLEAR CREEK,CHERRY CREEK,SAND CREEK,1st CREEK,2nd CREEK,3rd CREEK,BEEBE SEEP,BOX ELDER,KIOWA,29,2,60,40
+!  + aug4                  2495 DATA DE11,14,WEST PLUM,PLUM,LITTLE DRY,PLATTE,BEAR,CLEAR CREEK,CHERRY CREEK,SAND CREEK,1st CREEK,2nd CREEK,3rd CREEK,BEEBE SEEP,BOX ELDER,KIOWA,29,2,60,40
+!  + aug4                  2500 DATA LD2,8,PLUM,LITTLE DRY,CHERRY CREEK,COAL CREEK,RUNNING CREEK,KIOWA,WOLF,COMANCHE,54,13,49,36
+!  + aug4                  2510 DATA DE9,7,SAND CREEK,1st CREEK,3rd CREEK,BOX ELDER,LOST CREEK,KIOWA COMANCHE & WOLF,BIJOU,30,30,59,31
+!  + aug4                  2520 DATA DE10,9,BIJOU,BIG SANDY,MONUMENT,COTTONWOOD,SHOOKS RUN,SAND CREEK,BLACK SQUIRREL,STEELS FORK,HORSE CREEK,77,15,33,48
+!  + aug4                  2530 DATA CW1,10,MONUMENT,EAST PLUM - w,EAST PLUM - e,WEST CHERRY,EAST CHERRY,CHERRY,KIOWA,KETTLE,SAND,BIG SANDY,51,16,49,36
+!  + aug4                  2540 DATA LA1,4,BIG DRY,S. PLATTE,BEEBE & BOX ELDER,LOST CREEK,19,2,25,47
+!  + aug4                  2550 DATA LD3,8,PLUM,LITTLE DRY,CHERRY CREEK,COAL CREEK,RUNNING CREEK,KIOWA,WOLF,COMANCHE,54,13,49,36
+!  + aug4                  2560 DATA AR1,7,JARRE,PLUM,BEAR,S. PLATTE,BEEBE,BOX ELDER,LOST CREEK,20,2,55,45
+!  + aug4                  2570 DATA LF8,10,W. MONUMENT,DOUGLAS,MONUMENT,SHOOKS RUN,SAND,JIMMY CAMP,WILLIAMS,CHICO,BLACK SQUIRREL,POND,90,18,30,41
+!  + aug4                  2580 DATA DA1,5,EAST PLUM,COAL CREEK,KIOWA CREEK,CHERRY CREEK,RUNNING CREEK,58,16,30,29
+!  + aug4                  2590 DATA DA2,11,MONUMENT,EAST PLUM - w,EAST PLUM - e,WEST CHERRY,EAST CHERRY,CHERRY,KIOWA,KETTLE,SAND,BIG SANDY,BLACK SQUIRREL,78,17,25,30
+!  + aug4                  2591 DATA "LF4",3,"BEAR","PLATTE","WEST PLUM",54,6,40,40
+!  + aug4                  2592 DATA "LF6",4,"PLATTE","BOULDER CREEK","CLEAR CREEK","BEAR CREEK",1,1,57,28
+!  + aug4                  2593 DATA "LF1",4,"PLATTE","BOULDER CREEK","BOX ELDER","KIOWA-BIJOU",1,11,60,40
+!  + aug4                  2594 DATA "AR3",8,"MONUMENT","KETTLE","COTTONWOOD","SHOOKS RUN","SAND","JIMMY CAMP","BLACK SQUIRREL","WEST PLUM",60,9,55,38
+!  + aug4                  2595 DATA "AR4",8,"SAND","JIMMY CAMP","BLACK SQUIRREL","POND","STEELS FORK","HORSE CREEK","RUSH CREEK","BIG SANDY",72,29,43,45
+!  + aug4                  2596 DATA "AR2",5,"BEEBE","BOX ELDER","LOST CREEK","KIOWA COMANCHE WOLF","BIJOU",20,29,58,41
+!  + aug4                  2600 DATA "LF2",2,"KIOWA-BIJOU","SAN ARROYO",18,47,34,34
+!  + aug4                  2610 DATA "LF3",8,"POND","STEELS FORK","HORSE","RUSH","BIG SANDY","LITTLE HORSE","ADOBE","MUSTANG",60,50,60,35
+!  + aug4                  2611 DATA "AR10",8,"MONUMENT","KETTLE","COTTONWOOD","SHOOKS RUN","SAND","JIMMY CAMP","BLACK SQUIRREL","WEST PLUM",60,9,55,38
+!  + aug4                  2620 'DATA
+!  + aug4                  2630 'DATA
+!  + aug4                  2640 'DATA
+!  + aug4                  2650 DATA END
 !
 !                          3000 ' ********* SUB TO PRINT STREAM SEG. DEPLETION ****************
 !                          3010 IF FLG3=1 GOTO 3030
@@ -340,7 +341,7 @@
 !  + readjunkfile          4010 IF ERL=50 THEN GOSUB 5000:RESUME 50
 !                          4011 IF ERL=1370 THEN NAM2$=DD1$+"TAPE74.DAT":NAME NAM2$ AS NAM$:RESUME 1370
 !                          4012 IF ERL=2464 THEN CLOSE#3:RESUME 2470
-!                          4013 IF ERL=782 THEN CLOSE#1:CLOSE#2:RESUME 790
+!  + createtape9           4013 IF ERL=782 THEN CLOSE#1:CLOSE#2:RESUME 790
 !                          4020 CLS:BEEP:PRINT "ERROR OCCURED AT LINE";ERL;"IN AUG3.BAS":SYSTEM:END
 !
 !  + createjunkfile        5000 REM  *************** CREATE COMMON VARIABLES AND WRITE TO JUNK.DAT *******
