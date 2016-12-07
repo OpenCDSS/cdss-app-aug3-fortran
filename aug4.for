@@ -45,8 +45,8 @@ c     Local variables
       data t9unit2    /15/
       data t1unit1    /16/
       data t1unit2    /17/
-      data debug_cli  /.TRUE./ !turn this off in production
-      data debug_log  /.TRUE./ !turn this off in production
+      data debug_cli  /.FALSE./ !turn this off in production
+      data debug_log  /.FALSE./ !turn this off in production
       !     5020 DD1$="C:\AUG3\"
 c      data dirsep     /'/'/
 c      data dd1s       /'/home/jim/workspaces/dwr_aug3_scripts/'/
