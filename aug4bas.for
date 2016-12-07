@@ -1,10 +1,10 @@
-!                          1 REM KEY OFF:CLS:INPUT "ENTER RUN NUMBER (Ex: R1 ) ";RNN$
+!  + aug4                  1 REM KEY OFF:CLS:INPUT "ENTER RUN NUMBER (Ex: R1 ) ";RNN$
 !  + common3               2 DIM NTS(10),TSMULT(10),PERLEN(10)
 !  + aug4                  3 READ RNN$
 !  + aug4                  4 DATA "R1"
-!                          10 REM ************************** AUG2 *******************************************
-!                          15 CLS
-!                          20 ON ERROR GOTO 4000
+!  + aug4                  10 REM ************************** AUG2 *******************************************
+!  + aug4                  15 CLS
+!  + aug4                  20 ON ERROR GOTO 4000
 !  + tape74setup           25 OPEN "I",#1,"TAPE74.DAT"
 !  + tape74setup           26 CLOSE#1:
 !  + tape74setup           27 PRINT "MODEL OUTPUT (TAPE74.DAT) HAS NOT BEEN RENAMED WITH RUN NUMBER"
@@ -354,8 +354,8 @@
 !  + selectstressperiods   5007 PRINT
 !  + selectstressperiods   5008 PRINT "If you wish to simulate 2 stress periods as described above, press RETURN only  otherwise enter the number of stress periods to be simulated  ";
 !  + selectstressperiods   5009 INPUT "";NSP$
-!                          5010 REM INPUT "ENTER MODEL NAME (Ex:  DE10) (enter S for program to suggest model) ";SHORT$
-!                          5011 REM IF SHORT$="s" OR SHORT$="S" THEN GOSUB 6000
+!  + createjunkfile        5010 REM INPUT "ENTER MODEL NAME (Ex:  DE10) (enter S for program to suggest model) ";SHORT$
+!  + createjunkfile        5011 REM IF SHORT$="s" OR SHORT$="S" THEN GOSUB 6000
 !  + selectaquifer         5012 GOSUB 6000
 !  + createjunkfile        5020 DD1$="C:\AUG3\"
 !  + createjunkfile        5021 IF NSP$="" THEN NSP=2 ELSE NSP=VAL(NSP$):GOTO 5040
@@ -382,23 +382,23 @@
 !  + createjunkfile        5160 PRINT#1,NTS(X);TSMULT(X);PERLEN(X)
 !  + createjunkfile        5165 NEXT X
 !  + createjunkfile        5170 CLOSE#1
-!                          5171 L=LEN(SHORT$)
-!                          5172 IF L=3 THEN SDIR$=MID$(SHORT$,1,2)+"0"+MID$(SHORT$,3,1) ELSE SDIR$=SHORT$
-!                          5173 OPEN "I",#1,"C:\AUG3\"+SDIR$+"\TAPE1.SAV"
-!                          5174 OPEN "O",#2,"C:\AUG3\"+SDIR$+"\TAPE1.DAT"
-!                          5175 FOR X=1 TO 2
-!                          5176 LINE INPUT#1,A$
-!                          5177 PRINT#2,A$
-!                          5178 NEXT X
-!                          5179 INPUT#1,K1,K2,K3,K4,K5
-!                          5180 PRINT#2,USING"##########";K1;K2;K3;NSP;K5
-!                          5181 LINE INPUT#1,A$
-!                          5182 IF MID$(A$,1,10)<>"3155760000" THEN PRINT#2,A$:GOTO 5181
-!                          5183 FOR X=1 TO NSP
-!                          5184 PRINT#2,USING"##########";PERLEN(X)*1440*365.25*60;NTS(X);:PRINT#2,USING"#####.####";TSMULT(X)
-!                          5185 NEXT X
-!                          5186 CLOSE#1:CLOSE#2
-!                          5187 RETURN
+!  + createjunkfile        5171 L=LEN(SHORT$)
+!  + createjunkfile        5172 IF L=3 THEN SDIR$=MID$(SHORT$,1,2)+"0"+MID$(SHORT$,3,1) ELSE SDIR$=SHORT$
+!  + createjunkfile        5173 OPEN "I",#1,"C:\AUG3\"+SDIR$+"\TAPE1.SAV"
+!  + createjunkfile        5174 OPEN "O",#2,"C:\AUG3\"+SDIR$+"\TAPE1.DAT"
+!  + createjunkfile        5175 FOR X=1 TO 2
+!  + createjunkfile        5176 LINE INPUT#1,A$
+!  + createjunkfile        5177 PRINT#2,A$
+!  + createjunkfile        5178 NEXT X
+!  + createjunkfile        5179 INPUT#1,K1,K2,K3,K4,K5
+!  + createjunkfile        5180 PRINT#2,USING"##########";K1;K2;K3;NSP;K5
+!  + createjunkfile        5181 LINE INPUT#1,A$
+!  + createjunkfile        5182 IF MID$(A$,1,10)<>"3155760000" THEN PRINT#2,A$:GOTO 5181
+!  + createjunkfile        5183 FOR X=1 TO NSP
+!  + createjunkfile        5184 PRINT#2,USING"##########";PERLEN(X)*1440*365.25*60;NTS(X);:PRINT#2,USING"#####.####";TSMULT(X)
+!  + createjunkfile        5185 NEXT X
+!  + createjunkfile        5186 CLOSE#1:CLOSE#2
+!  + createjunkfile        5187 RETURN
 !
 !  + selectaquifer         6000 REM ********* SUB TO SELECT MODEL **********************
 !  + selectaquifer         6010 CLS
