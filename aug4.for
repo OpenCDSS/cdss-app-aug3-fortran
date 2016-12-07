@@ -48,8 +48,10 @@ c     Local variables
       data debug_cli  /.TRUE./ !turn this off in production
       data debug_log  /.TRUE./ !turn this off in production
       !     5020 DD1$="C:\AUG3\"
-      data dirsep     /'/'/
-      data dd1s       /'/home/jim/workspaces/dwr_aug3_scripts/'/
+c      data dirsep     /'/'/
+c      data dd1s       /'/home/jim/workspaces/dwr_aug3_scripts/'/
+      data dirsep     /'\'/
+      data dd1s       /'c:\aug3\'/
 c _________________________________________________________
 c     set the default run id
       data rnns      /'R1'/

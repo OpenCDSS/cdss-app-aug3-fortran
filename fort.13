@@ -1,0 +1,10 @@
+ arg4 debug: nlog          13
+ arg4 debug: incli           5
+ arg4 debug: outcli           6
+ arg4 debug: debug_cli T
+ arg4 debug: debug_log T
+ arg4 debug: commandlinesetup: start
+ arg4 debug: command_line = C:\Users\jim\Documents\GitHub\dwr_aug3_scripts\aug4.exe         
+ arg4 debug: arg            0  = C:\Users\jim\Documents\GitHub\dw
+ arg4 debug: tape74setup: start
+ arg4 debug: logfilesetup: start
