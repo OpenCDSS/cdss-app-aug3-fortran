@@ -26,7 +26,7 @@
      7 modelcountmax, rivercountmax
       common /rblock3/ tsmult(10), fac
       real tsmult, fac
-c     common /lblock3/ 
-c     logical
+c      common /lblock3/ 
+c      logical 
 
 

@@ -35,8 +35,8 @@ c _________________________________________________________
 c     Local variables
       integer ioptio, iback
 
-      data ver        /'version 0.7 '/
-      data vdate      /'12/07/2016  '/
+      data ver        /' 0.71'/
+      data vdate      /'12/08/2016  '/
       data fnlog      /'aug4.log'/
       data nlog       /13/
       data outcli     /6/
@@ -47,6 +47,8 @@ c     Local variables
       data t1unit2    /17/
       data debug_cli  /.FALSE./ !turn this off in production
       data debug_log  /.FALSE./ !turn this off in production
+      data versioncli /.FALSE./ ! this can get set if --version or -v is on the command line
+      data helpcli    /.FALSE./ ! this can get set if --help or -h is on the command line
       !     5020 DD1$="C:\AUG3\"
 c      data dirsep     /'/'/
 c      data dd1s       /'/home/jim/workspaces/dwr_aug3_scripts/'/
@@ -341,6 +343,21 @@ c     debugging output of flags and unit numbers
 c _________________________________________________________
 c     get and use the command line arguments
       call commandlinesetup
+      if (versioncli) then
+        write(outcli,300) ver, vdate, rnns
+        stop
+      endif
+      if (helpcli) then
+        write(outcli,400)
+ 400    format(
+     1    72('_'),//
+     2    '        AUG4'/
+     3    '        help message line 1'/
+     4    '        help message line 2'/
+     5    '        help message line 3'//
+     6    72('_'))
+        stop
+      endif
 c _________________________________________________________
 c     if it exists, make sure tape74.dat (model output) gets renamed
       call tape74setup
@@ -353,9 +370,9 @@ c     create a log file
      1    72('_'),//
      2    '        AUG4                       '/
      3    '        State of Colorado - Denver Basin Aquifer Models '//
-     4    '        Version: ',a12,/,
+     4    '        Version: ',a5,/,
      5    '        Last revision date: ',a12,//
-     6    '        Run id set to ',a32,//
+     6    '        Run id set to ',a8,//
      7    72('_'))
 c _________________________________________________________
 c     read the "junk" file containing run parameters
@@ -643,7 +660,26 @@ c     get and use command line args
             write(nlog,*)"arg4 debug: ", "arg ",iargcount," = ",arg
           endif
           ! use the first arg as the run id if the user provided one
+          !and if it is not a command like --version or -v
           if (iargcount.eq.1) then
+            ! check for special commands
+            if (trim(arg).eq.'--version') then
+              versioncli = .TRUE.
+              return
+            endif
+            if (trim(arg).eq.'-v') then
+              versioncli = .TRUE.
+              return
+            endif
+            if (trim(arg).eq.'--help') then
+              helpcli = .TRUE.
+              return
+            endif
+            if (trim(arg).eq.'-h') then
+              helpcli = .TRUE.
+              return
+            endif
+            ! otherwise use this arg as the run id
             runid_commandline = .TRUE.
             rnns = arg
           endif
@@ -697,7 +733,7 @@ c     read the "junk" file containing run parameters
         if (debug_log) then
           write(nlog,*)"arg4 debug: readjunkfile: start"
         endif
-        junkfilename = trim(junk_base)//'.'//rnns
+        junkfilename = trim(junk_base)//'.'//trim(rnns)
  100    INQUIRE(FILE=trim(junkfilename), EXIST=file_exists)
         if (file_exists) then
           if (debug_cli) then
@@ -1004,7 +1040,7 @@ c     subroutine 5000
 !     5160 PRINT#1,NTS(X);TSMULT(X);PERLEN(X)
 !     5165 NEXT X
 !     5170 CLOSE#1
-        junkfilename = trim(junk_base)//'.'//rnns
+        junkfilename = trim(junk_base)//'.'//trim(rnns)
         open(njunk,file=trim(junkfilename), status='unknown')
         write(njunk,*)nsp
         write(njunk,*)modelshort
@@ -1667,7 +1703,7 @@ c       create the data file
         filename = "TAPE"//tns//".DAT"
         fullfilename = trim(dd1s)//trim(filename)
         open(t9unit1,file=trim(fullfilename), status='unknown')
-        filename = "TAPE"//tns//"."//rns
+        filename = "TAPE"//tns//"."//trim(rns)
         fullfilename = trim(dd1s)//trim(filename)
         open(t9unit2,file=trim(fullfilename), status='unknown')
         nuts = "N"

@@ -6,7 +6,8 @@
      1                 junk_base, dirsep
       character(len=48) :: junk_base
       character(len=24) :: fnlog, tape74_base, tape74_ext
-      character(len=12) :: ver, vdate
+      character(len=12) :: vdate
+      character(len=5) :: ver
       character(len=1) :: dirsep
-      common /lblock2/ debug_cli, debug_log
-      logical debug_cli, debug_log
+      common /lblock2/ debug_cli, debug_log, versioncli, helpcli
+      logical debug_cli, debug_log, versioncli, helpcli
