@@ -1667,6 +1667,9 @@ c       create the data file
         filename = "TAPE"//tns//".DAT"
         fullfilename = trim(dd1s)//trim(filename)
         open(t9unit1,file=trim(fullfilename), status='unknown')
+        filename = "TAPE"//tns//"."//rns
+        fullfilename = trim(dd1s)//trim(filename)
+        open(t9unit2,file=trim(fullfilename), status='unknown')
         nuts = "N"
         icb = 0
         if (nuts.eq."Y") icb = -1
@@ -1676,6 +1679,7 @@ c       create the data file
         read (incli,*,err=299) mx
         if (mx.ge.1) then
           write(t9unit1,203)mx,icb
+          write(t9unit2,203)mx,icb
  203      format(I10,I10)         
           goto 300
         endif
@@ -1692,6 +1696,7 @@ c       well pumping and locations
           read (incli,*,err=399) itmp
           if (itmp.ge.0) then
             write (t9unit1,303) itmp
+            write (t9unit2,303) itmp
  303        format(I10)
             write(outcli,305)nas,a1s
  305        format(4X,"FOR EACH ",A4," ENTER ",A13,
@@ -1749,6 +1754,8 @@ c               740 J=J-JMIN+1
      1                     " and column ",I4)
 !     750 PRINT#1,USING"##########";1;I;J;:PRINT#1,USING"###.######";Q*FAC;:PRINT#1,TAB(51);"SEC";SCTN;"T";TWP$;" R";MID$(STR$(RNG),2);"W"
                 write (t9unit1,314)aqlayer,i,j,q*fac,
+     1                                section,township,range
+                write (t9unit2,314)aqlayer,i,j,q*fac,
      1                                section,township,range
  314      format(I10,I10,I10,F10.6,10X,"SEC",I3,1X,"T",A2,1X,"R",I2,"W")
                 if (debug_cli) then
@@ -1816,16 +1823,6 @@ c_______________________________________________________________________
  400      continue
         end do
         close (t9unit1)
-        open(t9unit1,file=trim(fullfilename), status='old')
-        filename = "TAPE"//tns//"."//rns
-        fullfilename = trim(dd1s)//trim(filename)
-        open(t9unit2,file=trim(fullfilename), status='unknown')
-        do
-          read(t9unit1,'(A128)',end=500,err=500)fileline
-          write(t9unit2,*,err=500)trim(fileline)
-        end do
- 500    continue
-        close(t9unit1)
-        close(t9unit2)
+        close (t9unit2)
         return
       end
