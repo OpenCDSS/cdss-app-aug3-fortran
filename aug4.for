@@ -35,8 +35,8 @@ c _________________________________________________________
 c     Local variables
       integer ioptio, iback
 
-      data ver        /' 0.72'/
-      data vdate      /'12/08/2016  '/
+      data ver        /' 0.73'/
+      data vdate      /'12/09/2016  '/
       data fnlog      /'aug4.log'/
       data nlog       /13/
       data outcli     /6/
@@ -97,9 +97,9 @@ c     set some parameter constraints
       data sectionmin    /1/
       data sectionmax    /36/
       data townshipmin   /1/
-      data townshipmax   /12/
-      data rangemin      /60/
-      data rangemax      /69/
+      data townshipmax   /16/
+      data rangemin      /56/
+      data rangemax      /70/
 c _________________________________________________________
 c     section column index
       data sectioncolumn /6,5,4,3,2,1,
