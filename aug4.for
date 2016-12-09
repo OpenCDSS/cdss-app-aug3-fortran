@@ -35,7 +35,7 @@ c _________________________________________________________
 c     Local variables
       integer ioptio, iback
 
-      data ver        /' 0.71'/
+      data ver        /' 0.72'/
       data vdate      /'12/08/2016  '/
       data fnlog      /'aug4.log'/
       data nlog       /13/
@@ -97,7 +97,7 @@ c     set some parameter constraints
       data sectionmin    /1/
       data sectionmax    /36/
       data townshipmin   /1/
-      data townshipmax   /9/
+      data townshipmax   /12/
       data rangemin      /60/
       data rangemax      /69/
 c _________________________________________________________
@@ -1233,6 +1233,7 @@ c     select the well location
         include 'aug4_common2.inc'
         include 'aug4_common3.inc'
         ! local variables
+        integer i, lents
         logical locationok
         character(len=127) :: readline
         character(len=24) :: rawtownship, trimtownship
@@ -1248,8 +1249,8 @@ c     select the well location
         !read (incli,'(A127)',err=98) readline
         !read (readline,*,err=98) section, township, range
         read (incli,*,err=98) section, rawtownship, range
-          trimtownship=trim(rawtownship)
-          township=trimtownship(1:2)
+        township = adjustl(rawtownship)
+        lents = len(trim(township))
           if (debug_cli) then
             write(outcli,*)
      1      "arg4 debug: selectwelllocation: section, township, range ",
@@ -1262,10 +1263,16 @@ c     select the well location
           endif
         if (section.ge.sectionmin.and.section.le.sectionmax) then
           if (range.ge.rangemin.and.range.le.rangemax) then
-            read(township,'(I1)')itownship
-            !read(township,'(1x,A1)')ctownship
-            !itownship = township[1:1]
-            ctownship = township(2:2)
+            select case (len(trim(township)))
+              case (2)
+                read(township,'(I1)')itownship
+                ctownship = township(2:2)
+              case (3)
+                read(township,'(I2)')itownship
+                ctownship = township(3:3)
+              case default
+                goto 99
+            end select
             if (debug_cli) then
               write(outcli,*)
      1        "arg4 debug: selectwelllocation: itownship, ctownship",

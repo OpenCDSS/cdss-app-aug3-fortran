@@ -5,7 +5,8 @@
       character(len=24) :: aqnam, aqnams, rns, rnns, rivnames
       character(len=32) :: a2s
       character(len=13) :: a1s
-      character(len=2) :: aqshort, shorts, aqshorts, township
+      character(len=2) :: aqshort, shorts, aqshorts
+      character(len=8) :: township
       character(len=4) :: modelshort, modelshorts, nas
       character(len=1) :: ctownship, tns
       common /iblock3/ nts(10), perlen(10), nsp, spcount, spselect,
