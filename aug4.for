@@ -35,8 +35,8 @@ c _________________________________________________________
 c     Local variables
       integer ioptio, iback
 
-      data ver        /' 0.75'/
-      data vdate      /'12/14/2016  '/
+      data ver        /' 0.76'/
+      data vdate      /'12/15/2016  '/
       data fnlog      /'aug4.log'/
       data nlog       /13/
       data outcli     /6/
@@ -723,7 +723,7 @@ c     read the "junk" file containing run parameters
         include 'aug4_common3.inc'
         ! local variables
         character(len=48) :: junkfilename, trimmed
-        character(len=128) :: fileline
+        character(len=255) :: fileline
         logical file_exists, runid_match
         integer i
 
@@ -755,7 +755,7 @@ c     read the "junk" file containing run parameters
             write(nlog,*)
      1      "arg4 debug: readjunkfile: nsp ",nsp
           endif
-          read(njunk,'(A128)')fileline
+          read(njunk,'(A255)')fileline
           trimmed=trim(adjustl(fileline))
           shorts=trimmed(1:2)
           if (debug_cli) then
@@ -766,7 +766,7 @@ c     read the "junk" file containing run parameters
             write(nlog,*)
      1      "arg4 debug: readjunkfile: trimmed,shorts ",trimmed,shorts
           endif
-          read(njunk,'(A128)')fileline
+          read(njunk,'(A255)')fileline
           dd1s = adjustl(fileline)
           if (debug_cli) then
             write(outcli,*)
@@ -962,7 +962,7 @@ c     subroutine 5000
         character(len=4) :: subdirname, fmt
         character(len=24) :: filename
         character(len=96) :: fullfilename
-        character(len=128) :: fileline
+        character(len=255) :: fileline
 
         !select model parameters
         if (debug_cli) then
@@ -1087,12 +1087,12 @@ c     subroutine 5000
      1    trim(dd1s)//trim(subdirname)//trim(dirsep)//trim(filename)
         open(t1unit2,file=trim(fullfilename), status='unknown')
         do
-          read(t1unit1,'(A128)',end=500,err=500)fileline
+          read(t1unit1,'(A255)',end=500,err=500)fileline
           fl_len = len_trim(fileline)
           if (fl_len.eq.0)then
             write(t1unit2,*)
           else
-            write(fmt,*)fl_len
+            write(fmt,"(I3)")fl_len
             write(t1unit2,"(A"//adjustl(fmt)//")",err=500)trim(fileline)
           end if
         end do
@@ -1675,7 +1675,7 @@ c     create tape9.dat (well) data file
         character(len=24) :: rawtownship, trimtownship
         character(len=24) :: filename
         character(len=96) :: header, fullfilename
-        character(len=128) :: fileline
+        character(len=255) :: fileline
         real q
         data aqlayer /1/
 
