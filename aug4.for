@@ -35,7 +35,7 @@ c _________________________________________________________
 c     Local variables
       integer ioptio, iback
 
-      data ver        /' 0.74'/
+      data ver        /' 0.75'/
       data vdate      /'12/14/2016  '/
       data fnlog      /'aug4.log'/
       data nlog       /13/
@@ -958,8 +958,8 @@ c     subroutine 5000
         include 'aug4_common3.inc'
         ! local variables
         character(len=48) :: junkfilename, userinput
-        integer iperlen, sp, mdlidlen
-        character(len=4) :: subdirname
+        integer iperlen, sp, mdlidlen, fl_len
+        character(len=4) :: subdirname, fmt
         character(len=24) :: filename
         character(len=96) :: fullfilename
         character(len=128) :: fileline
@@ -976,6 +976,8 @@ c     subroutine 5000
         call selectaquifer
         call selectwelllocation
         call assignmodel
+        write(outcli,*)
+     1    "The given location is in modeled aquifer zone: ", modelshort
         ! set up the data
 !     5021 IF NSP$="" THEN NSP=2 ELSE NSP=VAL(NSP$):GOTO 5040
         if(spselect.eq.0) then
@@ -1086,7 +1088,13 @@ c     subroutine 5000
         open(t1unit2,file=trim(fullfilename), status='unknown')
         do
           read(t1unit1,'(A128)',end=500,err=500)fileline
-          write(t1unit2,*,err=500)trim(fileline)
+          fl_len = len_trim(fileline)
+          if (fl_len.eq.0)then
+            write(t1unit2,*)
+          else
+            write(fmt,*)fl_len
+            write(t1unit2,"(A"//adjustl(fmt)//")",err=500)trim(fileline)
+          end if
         end do
  500    continue
         close(t1unit1)
@@ -1289,7 +1297,8 @@ c     select the well location
            if(itownship.ge.townshipmin.and.itownship.le.townshipmax)then
               call checkwelllocation
               if (code.gt.0) then
-                write(outcli,*)"Code =",code
+                ! code > 0 => acceptable location
+                ! write(outcli,*)"Code =",code
                 return
               else
                 write(outcli,*)"Invalid location (",
