@@ -958,7 +958,8 @@ c     subroutine 5000
         include 'aug4_common3.inc'
         ! local variables
         character(len=48) :: junkfilename, userinput
-        integer iperlen, sp, mdlidlen, fl_len
+        integer iperlen, sp, mdlidlen, fl_len, iline
+        integer k1,k2,k3,k4,k5
         character(len=4) :: subdirname, fmt
         character(len=24) :: filename
         character(len=96) :: fullfilename
@@ -1086,7 +1087,8 @@ c     subroutine 5000
         fullfilename = 
      1    trim(dd1s)//trim(subdirname)//trim(dirsep)//trim(filename)
         open(t1unit2,file=trim(fullfilename), status='unknown')
-        do
+c       copy the first two lines
+        do iline=1,2
           read(t1unit1,'(A255)',end=500,err=500)fileline
           fl_len = len_trim(fileline)
           if (fl_len.eq.0)then
@@ -1095,6 +1097,30 @@ c     subroutine 5000
             write(fmt,"(I3)")fl_len
             write(t1unit2,"(A"//adjustl(fmt)//")",err=500)trim(fileline)
           end if
+        end do
+c       create a modified line 3 with the updated stress period count
+        read(t1unit1,'(5I10)',end=500,err=500)k1,k2,k3,k4,k5
+        write(t1unit2,'(5I10)',err=500)k1,k2,k3,nsp,k5
+c       copy the active grid cell lines
+        do
+          read(t1unit1,'(A255)',end=500,err=500)fileline
+          fl_len = len_trim(fileline)
+          if (fl_len.eq.0) then
+            write(t1unit2,*)
+          else
+            if (fileline(1:10).eq."3155760000") exit
+            write(fmt,"(I3)")fl_len
+            write(t1unit2,"(A"//adjustl(fmt)//")",err=500)trim(fileline)
+          end if
+        end do
+c       rewrite the next lines
+        do sp=1,nsp
+!     5184 PRINT#2,USING"##########";PERLEN(X)*1440*365.25*60;NTS(X);:PRINT#2,USING"#####.####";TSMULT(X)
+          iperlen = int(perlen(sp)*1440*365.25*60)
+          write(t1unit2,'(I10,I10,F10.4)',err=500)
+     1      iperlen,
+     2      nts(sp),
+     3      tsmult(sp)
         end do
  500    continue
         close(t1unit1)
