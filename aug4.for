@@ -35,8 +35,8 @@ c _________________________________________________________
 c     Local variables
       integer ioptio, iback
 
-      data ver        /' 0.76'/
-      data vdate      /'12/15/2016  '/
+      data ver        /' 0.77'/
+      data vdate      /'01/13/2016  '/
       data fnlog      /'aug4.log'/
       data nlog       /13/
       data outcli     /6/
