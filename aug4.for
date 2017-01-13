@@ -960,6 +960,8 @@ c     subroutine 5000
         character(len=48) :: junkfilename, userinput
         integer iperlen, sp, mdlidlen, fl_len, iline
         integer k1,k2,k3,k4,k5
+        real*8 xperlen
+        integer*8 i8perlen
         character(len=4) :: subdirname, fmt
         character(len=24) :: filename
         character(len=96) :: fullfilename
@@ -1116,9 +1118,14 @@ c       copy the active grid cell lines
 c       rewrite the next lines
         do sp=1,nsp
 !     5184 PRINT#2,USING"##########";PERLEN(X)*1440*365.25*60;NTS(X);:PRINT#2,USING"#####.####";TSMULT(X)
-          iperlen = int(perlen(sp)*1440*365.25*60)
+          write(outcli,*)'sp',sp
+          write(outcli,*)'perlen(sp)',perlen(sp)
+          xperlen = perlen(sp)*1440*365.25*60
+          write(outcli,*)'xperlen',xperlen
+          i8perlen = perlen(sp)*1440*365.25*60
+          write(outcli,*)'i8perlen',i8perlen
           write(t1unit2,'(I10,I10,F10.4)',err=500)
-     1      iperlen,
+     1      i8perlen,
      2      nts(sp),
      3      tsmult(sp)
         end do
