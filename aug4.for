@@ -35,7 +35,7 @@ c _________________________________________________________
 c     Local variables
       integer ioptio, iback
 
-      data ver        /' 0.77'/
+      data ver        /' 0.78'/
       data vdate      /'01/13/2016  '/
       data fnlog      /'aug4.log'/
       data nlog       /13/
@@ -1118,12 +1118,7 @@ c       copy the active grid cell lines
 c       rewrite the next lines
         do sp=1,nsp
 !     5184 PRINT#2,USING"##########";PERLEN(X)*1440*365.25*60;NTS(X);:PRINT#2,USING"#####.####";TSMULT(X)
-          write(outcli,*)'sp',sp
-          write(outcli,*)'perlen(sp)',perlen(sp)
-          xperlen = perlen(sp)*1440*365.25*60
-          write(outcli,*)'xperlen',xperlen
           i8perlen = perlen(sp)*1440*365.25*60
-          write(outcli,*)'i8perlen',i8perlen
           write(t1unit2,'(I10,I10,F10.4)',err=500)
      1      i8perlen,
      2      nts(sp),
@@ -1478,6 +1473,8 @@ c     select a model based on the aquifer and well location
 !     6310 IF I>77 THEN SHORT$="AR4"
             else if(II.gt.77) then
               modelshort = "AR4"
+            else
+              modelshort = "NA"
             end if
           case (4) ! DENVER
 !     6330 IF I>82 THEN SHORT$="DE10":GOTO 6380
@@ -1513,8 +1510,8 @@ c     select a model based on the aquifer and well location
      1      "ADEQUATE MODEL NOT AVAILABLE. exit AUG4"
           endif
           write(outcli,*)
-     1    "ADEQUATE MODEL NOT AVAILABLE (press RETURN to exit AUG4...)"
-          read(incli,*)nuts
+     1    "ADEQUATE MODEL NOT AVAILABLE. Exiting AUG4..."
+          !read(incli,*)nuts
           call exit(99)
         end if
           if (debug_cli) then
