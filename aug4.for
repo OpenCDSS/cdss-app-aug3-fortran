@@ -35,8 +35,8 @@ c _________________________________________________________
 c     Local variables
       integer ioptio, iback
 
-      data ver        /' 0.73'/
-      data vdate      /'12/09/2016  '/
+      data ver        /' 0.78'/
+      data vdate      /'01/13/2016  '/
       data fnlog      /'aug4.log'/
       data nlog       /13/
       data outcli     /6/
@@ -53,7 +53,7 @@ c     Local variables
 c      data dirsep     /'/'/
 c      data dd1s       /'/home/jim/workspaces/dwr_aug3_scripts/'/
       data dirsep     /'\'/
-      data dd1s       /'c:\aug3\'/
+      data dd1s       /'C:\AUG3\'/
 c _________________________________________________________
 c     set the default run id
       data rnns      /'R1'/
@@ -830,7 +830,7 @@ c     read the "junk" file containing run parameters
         include 'aug4_common3.inc'
         ! local variables
         character(len=48) :: junkfilename, trimmed
-        character(len=128) :: fileline
+        character(len=255) :: fileline
         logical file_exists, runid_match
         integer i
 
@@ -840,7 +840,7 @@ c     read the "junk" file containing run parameters
         if (debug_log) then
           write(nlog,*)"arg4 debug: readjunkfile: start"
         endif
-        junkfilename = trim(junk_base)//'.'//trim(rnns)
+        junkfilename=trim(adjustl(junk_base))//'.'//trim(adjustl(rnns))
  100    INQUIRE(FILE=trim(junkfilename), EXIST=file_exists)
         if (file_exists) then
           if (debug_cli) then
@@ -862,8 +862,8 @@ c     read the "junk" file containing run parameters
             write(nlog,*)
      1      "arg4 debug: readjunkfile: nsp ",nsp
           endif
-          read(njunk,'(A128)')fileline
-          trimmed=trim(fileline)
+          read(njunk,'(A255)')fileline
+          trimmed=trim(adjustl(fileline))
           shorts=trimmed(1:2)
           if (debug_cli) then
             write(outcli,*)
@@ -873,7 +873,8 @@ c     read the "junk" file containing run parameters
             write(nlog,*)
      1      "arg4 debug: readjunkfile: trimmed,shorts ",trimmed,shorts
           endif
-          read(njunk,'(A48)')dd1s
+          read(njunk,'(A255)')fileline
+          dd1s = adjustl(fileline)
           if (debug_cli) then
             write(outcli,*)
      1      "arg4 debug: readjunkfile: dd1s ",dd1s
@@ -1064,11 +1065,14 @@ c     subroutine 5000
         include 'aug4_common3.inc'
         ! local variables
         character(len=48) :: junkfilename, userinput
-        integer iperlen, sp, mdlidlen
-        character(len=4) :: subdirname
+        integer iperlen, sp, mdlidlen, fl_len, iline
+        integer k1,k2,k3,k4,k5
+        real*8 xperlen
+        integer*8 i8perlen
+        character(len=4) :: subdirname, fmt
         character(len=24) :: filename
         character(len=96) :: fullfilename
-        character(len=128) :: fileline
+        character(len=255) :: fileline
 
         !select model parameters
         if (debug_cli) then
@@ -1082,6 +1086,8 @@ c     subroutine 5000
         call selectaquifer
         call selectwelllocation
         call assignmodel
+        write(outcli,*)
+     1    "The given location is in modeled aquifer zone: ", modelshort
         ! set up the data
 !     5021 IF NSP$="" THEN NSP=2 ELSE NSP=VAL(NSP$):GOTO 5040
         if(spselect.eq.0) then
@@ -1175,7 +1181,7 @@ c            tsmult(sp) = is already set
 !     5185 NEXT X
 !     5186 CLOSE#1:CLOSE#2
 !     5187 RETURN
-        mdlidlen = len(modelshort)
+        mdlidlen = len_trim(modelshort)
         select case (mdlidlen)
           case (3)
             subdirname = modelshort(1:2)//"0"//modelshort(3:3)
@@ -1183,14 +1189,47 @@ c            tsmult(sp) = is already set
             subdirname = modelshort
         end select
         filename = "TAPE1.SAV"
-        fullfilename = trim(dd1s)//subdirname//dirsep//trim(filename)
+        fullfilename = 
+     1    trim(dd1s)//trim(subdirname)//trim(dirsep)//trim(filename)
         open(t1unit1,file=trim(fullfilename), status='old')
         filename = "TAPE1.DAT"
-        fullfilename = trim(dd1s)//subdirname//dirsep//trim(filename)
+        fullfilename = 
+     1    trim(dd1s)//trim(subdirname)//trim(dirsep)//trim(filename)
         open(t1unit2,file=trim(fullfilename), status='unknown')
+c       copy the first two lines
+        do iline=1,2
+          read(t1unit1,'(A255)',end=500,err=500)fileline
+          fl_len = len_trim(fileline)
+          if (fl_len.eq.0)then
+            write(t1unit2,*)
+          else
+            write(fmt,"(I3)")fl_len
+            write(t1unit2,"(A"//adjustl(fmt)//")",err=500)trim(fileline)
+          end if
+        end do
+c       create a modified line 3 with the updated stress period count
+        read(t1unit1,'(5I10)',end=500,err=500)k1,k2,k3,k4,k5
+        write(t1unit2,'(5I10)',err=500)k1,k2,k3,nsp,k5
+c       copy the active grid cell lines
         do
-          read(t1unit1,'(A128)',end=500,err=500)fileline
-          write(t1unit2,*,err=500)trim(fileline)
+          read(t1unit1,'(A255)',end=500,err=500)fileline
+          fl_len = len_trim(fileline)
+          if (fl_len.eq.0) then
+            write(t1unit2,*)
+          else
+            if (fileline(1:10).eq."3155760000") exit
+            write(fmt,"(I3)")fl_len
+            write(t1unit2,"(A"//adjustl(fmt)//")",err=500)trim(fileline)
+          end if
+        end do
+c       rewrite the next lines
+        do sp=1,nsp
+!     5184 PRINT#2,USING"##########";PERLEN(X)*1440*365.25*60;NTS(X);:PRINT#2,USING"#####.####";TSMULT(X)
+          i8perlen = perlen(sp)*1440*365.25*60
+          write(t1unit2,'(I10,I10,F10.4)',err=500)
+     1      i8perlen,
+     2      nts(sp),
+     3      tsmult(sp)
         end do
  500    continue
         close(t1unit1)
@@ -1393,7 +1432,8 @@ c     select the well location
            if(itownship.ge.townshipmin.and.itownship.le.townshipmax)then
               call checkwelllocation
               if (code.gt.0) then
-                write(outcli,*)"Code =",code
+                ! code > 0 => acceptable location
+                ! write(outcli,*)"Code =",code
                 return
               else
                 write(outcli,*)"Invalid location (",
@@ -1540,6 +1580,8 @@ c     select a model based on the aquifer and well location
 !     6310 IF I>77 THEN SHORT$="AR4"
             else if(II.gt.77) then
               modelshort = "AR4"
+            else
+              modelshort = "NA"
             end if
           case (4) ! DENVER
 !     6330 IF I>82 THEN SHORT$="DE10":GOTO 6380
@@ -1575,8 +1617,8 @@ c     select a model based on the aquifer and well location
      1      "ADEQUATE MODEL NOT AVAILABLE. exit AUG4"
           endif
           write(outcli,*)
-     1    "ADEQUATE MODEL NOT AVAILABLE (press RETURN to exit AUG4...)"
-          read(incli,*)nuts
+     1    "ADEQUATE MODEL NOT AVAILABLE. Exiting AUG4..."
+          !read(incli,*)nuts
           call exit(99)
         end if
           if (debug_cli) then
@@ -1770,7 +1812,7 @@ c     create tape9.dat (well) data file
         character(len=24) :: rawtownship, trimtownship
         character(len=24) :: filename
         character(len=96) :: header, fullfilename
-        character(len=128) :: fileline
+        character(len=255) :: fileline
         real q
         data aqlayer /1/
 
