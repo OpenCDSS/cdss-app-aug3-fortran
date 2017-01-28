@@ -64,10 +64,46 @@ c     set the tape74 name
 c _________________________________________________________
 c     set the junk name
       data junk_base /'JUNK'/
+
 c _________________________________________________________
-c     set the stress period default/max count
+!     5022 NTS(1)=20:NTS(2)=60
+!     5023 TSMULT(1)=1.01:TSMULT(2)=1.01
+!     5024 PERLEN(1)=100:PERLEN(2)=300
+c _________________________________________________________
+c     set the simulation period count default/max count
       data spselect  /2/
       data spcount   /10/
+      data nsp       /2/
+      data xnsp      /2/
+      data xnspmin   /1/
+      data xnspmax   /5/
+      data nspcli    /.FALSE./
+c _________________________________________________________
+c     set the time step length (years)
+      data itslen    /1/
+      data itslmin   /1/
+      data itslmax   /10/
+      data tslen     /1,1,1,1,1,1,1,1,1,1/
+c     data tslen     /5,5,5,5,5,5,5,5,5,5/
+      data tslencli  /.FALSE./
+c _________________________________________________________
+c     set the number of time steps in each simulation period
+      data nts       /100,300,0,0,0,0,0,0,0,0/
+c      data nts       /20,60,0,0,0,0,0,0,0,0/
+      data ntscli    /.FALSE./
+c _________________________________________________________
+c     set the length (years) of each simulation period
+c       must = tslen*nts
+      data perlen    /100,300,0,0,0,0,0,0,0,0/
+      data perlencli /.FALSE./
+c _________________________________________________________
+c     set the time step multiplier default / cli flag
+      data xtsmult   /1.0/
+      data xtsmmin   /0.9/
+      data xtsmmax   /1.1/
+      data tsmult    /1.0,1.0,1.0,1.0,1.0,
+     0                1.0,1.0,1.0,1.0,1.0/
+      data tsmultcli /.FALSE./
 c _________________________________________________________
 c     set the aquifer names
       data aqselect  /1/ !default selection
@@ -82,7 +118,7 @@ c     set the aquifer names
      7                'NA',
      8                'NA',
      9                'NA'/
-      data aqshorts/  'LF',
+      data aqshorts  /'LF',
      1                'LA',
      2                'AR',
      3                'DE',
@@ -628,7 +664,7 @@ c     get and use command line args
         include 'aug4_common2.inc'
         include 'aug4_common3.inc'
         ! local variables
-        integer iargcount
+        integer iargcount, i
         integer command_line_len, status
         character(len=64) :: command_line
         character(len=32) :: arg, args
@@ -661,31 +697,102 @@ c     get and use command line args
           endif
           ! use the first arg as the run id if the user provided one
           !and if it is not a command like --version or -v
-          if (iargcount.eq.1) then
-            ! check for special commands
+          if (arg(1:1).eq.'-') then
+            ! check for special one token commands
+            ! these stop the program and just print out data
             if (trim(arg).eq.'--version') then
               versioncli = .TRUE.
+              ! stop reading args and return - i.e. exit subroutine
               return
             endif
             if (trim(arg).eq.'-v') then
               versioncli = .TRUE.
+              ! stop reading args and return - i.e. exit subroutine
               return
             endif
             if (trim(arg).eq.'--help') then
               helpcli = .TRUE.
+              ! stop reading args and return - i.e. exit subroutine
               return
             endif
             if (trim(arg).eq.'-h') then
               helpcli = .TRUE.
+              ! stop reading args and return - i.e. exit subroutine
               return
             endif
-            ! otherwise use this arg as the run id
+            ! check for args with assigned values,
+            !   read and then move to next one
+            !
+            ! set the default time step multiplier
+            if (arg(1:9)).eq.'--tsmult=') then
+              read(arg(10:len(arg)),'(*)')xtsmult
+              if(xtsmult.ge.xtsmmin.and.xtsmult.le.xtsmmax) then
+                tsmultcli = .TRUE.
+                do i=1,10
+                  tsmult(i)=xtsmult
+                end do
+              endif
+            endif
+            ! set the default number of simulation periods
+            ! note that nsp SHOULD be one of the args
+            if (arg(1:6)).eq.'--nsp=') then
+              read(arg(7:len(arg)),'(*)')insp
+              if(insp.ge.inspmin.and.insp.le.inspmax) then
+                nsp = insp
+                nspcli = .TRUE.
+              endif
+            endif
+            ! set the default time step length (years)
+            ! note that nsp MUST be one of the args
+            if (arg(1:8)).eq.'--tslen=') then
+              read(arg(9:len(arg)),'(*)')itslen
+              if(itslen.ge.itslmin.and.itslen.le.itslmax) then
+                tslencli = .TRUE.
+                do i=1,10
+                  tslen(i)=itslen
+                end do
+              endif
+            endif
+            ! set the length (years) of each simulation period
+            ! there should be multiple (nsp), comma delimited
+            ! record the whole string and parse it later
+            ! (why? because nsp might not have been read, yet)
+            if (arg(1:9)).eq.'--perlen=') then
+              cperlen=arg(10:len(arg))
+              perlencli = .TRUE.
+            endif
+            ! set the number of timesteps of each simulation period
+            ! there should be multiple (nsp), comma delimited
+            ! record the whole string and parse it later
+            ! (why? because nsp might not have been read, yet)
+            if (arg(1:6)).eq.'--nts=') then
+              cnts=arg(7:len(arg))
+              ntscli = .TRUE.
+            endif
+          else
+            ! assume it is a runid
+            ! note if there are multiple args like this, the last one
+            !   becomes the runid
             runid_commandline = .TRUE.
             rnns = arg
           endif
           args(iargcount+1) = trim(arg)
           iargcount = iargcount + 1
         end do
+c       parse the perlen and nts arg strings
+        if(ntscli)then
+          do i=1,nsp
+            read(cnts,'(*)',err=1111)ints
+            nts(i)=ints
+ 1111       perlen(i)=nts(i)*tslen(i)
+          end do
+        else
+          do i=1,nsp
+            read(cperlen,'(*)',err=1112)iperlen
+            perlen(i)=iperlen
+ 1112       nts(i)=perlen(i)/tslen(i)
+          end do
+        endif
         return
       end
 c _________________________________________________________
@@ -978,17 +1085,15 @@ c     subroutine 5000
         ! set up the data
 !     5021 IF NSP$="" THEN NSP=2 ELSE NSP=VAL(NSP$):GOTO 5040
         if(spselect.eq.0) then
-          nsp=2
 !     5022 NTS(1)=20:NTS(2)=60
 !     5023 TSMULT(1)=1.01:TSMULT(2)=1.01
 !     5024 PERLEN(1)=100:PERLEN(2)=300
-          nts(1) = 20
-          nts(2) = 60
-          tsmult(1) = 1.01
-          tsmult(2) = 1.01
-          perlen(1) = 100
-          perlen(2) = 300
+          ! defaults (but not these per DWR instructions)
+          !   are initialized above in DATA statements,
+          ! note: they should have been RESET by command line args
+          !    in the DOS batch file to match the particular AUG3 application!!!!
         else
+          ! user enters the simulation period parameters
           nsp=spselect
 !     5040 CLS:PRINT "REMEMBER FILES ON APOLLO ARE CONFIGURED FOR 2 STRESS PERIODS.  YOU WILL HAVE TO CHANGE TAPE1.DAT ON THE APOLLO.":PRINT
 !     5041 FOR X=1 TO NSP 
@@ -1001,9 +1106,11 @@ c     subroutine 5000
 !     5095 IF PERLEN(X)>300 THEN BEEP:CLS:PRINT "LENGTH OF TIME STEP CANNOT EXCEED 300 YEARS.  (press RETURN to abort) ...";:INPUT "";N$:SYSTEM
 !     5100 NEXT X
           write(outcli,*)
-     1   "REMEMBER FILES ON APOLLO ARE CONFIGURED FOR 2 STRESS PERIODS."
+     1   "REMEMBER FILES ARE CONFIGURED FOR 2 STRESS PERIODS."
+c     1   "REMEMBER FILES ON APOLLO ARE CONFIGURED FOR 2 STRESS PERIODS."
           write(outcli,*)
-     1    "  YOU WILL HAVE TO CHANGE TAPE1.DAT ON THE APOLLO."
+     1    "  YOU WILL HAVE TO CHANGE TAPE1.DAT."
+c     1    "  YOU WILL HAVE TO CHANGE TAPE1.DAT ON THE APOLLO."
           !loop through the nsp stress periods and get the stress period lengths
           do sp=1,nsp
  98         write(outcli,1001)sp
@@ -1020,8 +1127,8 @@ c     subroutine 5000
               goto 98
             endif
             perlen(sp) = iperlen
-            nts(sp) = iperlen / 5 ! 5 year time steps - note this is integer division
-            tsmult(sp) = 1.0001
+            nts(sp) = perlen(sp) / tslen(sp) ! note this is integer division
+c            tsmult(sp) = is already set
             goto 100
             ! iperlen input error
  99         write(outcli,*)

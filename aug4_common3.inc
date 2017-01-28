@@ -9,7 +9,9 @@
       character(len=8) :: township
       character(len=4) :: modelshort, modelshorts, nas
       character(len=1) :: ctownship, tns
-      common /iblock3/ nts(10), perlen(10), nsp, spcount, spselect,
+      common /iblock3/ nts(10), ints,
+     0 tslen(10), itslen, itslmin, itslmax, perlen(10), iperlen,
+     0 nsp, insp, inspmin, inspmax, spcount, spselect,
      1 aqselect, osel, aqcount, code, II, JJ,
      2 section, sectionmin, sectionmax, sectioncolumn(36),
      3 itownship, townshipmin, townshipmax,
@@ -17,7 +19,9 @@
      5 tnrs(22), imins(22), jmins(22), nrows(22), ncols(22),
      6 tnr, imin, jmin, nrow, ncol,
      7 modelcountmax, rivercountmax
-      integer nts, perlen, nsp, spcount, spselect,
+      integer nts, ints,
+     0 tslen, itslen, itslmin, itslmax, perlen, iperlen,
+     0 nsp, insp, inspmin, inspmax, spcount, spselect,
      1 aqselect, osel, aqcount, code, II, JJ,
      2 section, sectionmin, sectionmax, sectioncolumn,
      3 itownship, townshipmin, townshipmax,
@@ -25,8 +29,9 @@
      5 tnrs, imins, jmins, nrows, ncols,
      6 tnr, imin, jmin, nrow, ncol,
      7 modelcountmax, rivercountmax
-      common /rblock3/ tsmult(10), fac
-      real tsmult, fac
+      common /rblock3/ tsmult(10),
+     0             xtsmult, xtsmmin, xtsmmax, fac
+      real tsmult, xtsmult, xtsmmin, xtsmmax, fac
 c      common /lblock3/ 
 c      logical 
 

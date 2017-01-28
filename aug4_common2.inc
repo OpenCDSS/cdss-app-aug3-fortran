@@ -9,5 +9,7 @@
       character(len=12) :: vdate
       character(len=5) :: ver
       character(len=1) :: dirsep
-      common /lblock2/ debug_cli, debug_log, versioncli, helpcli
+      common /lblock2/ debug_cli, debug_log, versioncli, helpcli,
+     1              nspcli, tslencli, ntscli, perlencli, tsmultcli
       logical debug_cli, debug_log, versioncli, helpcli
+     1              nspcli, tslencli, ntscli, perlencli, tsmultcli
