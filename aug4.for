@@ -102,7 +102,7 @@ c     set the time step multiplier default / cli flag
       data xtsmmin   /0.9/
       data xtsmmax   /1.1/
       data tsmult    /1.0,1.0,1.0,1.0,1.0,
-     0                1.0,1.0,1.0,1.0,1.0/
+     1                1.0,1.0,1.0,1.0,1.0/
       data tsmultcli /.FALSE./
 c _________________________________________________________
 c     set the aquifer names
@@ -668,6 +668,7 @@ c     get and use command line args
         integer command_line_len, status
         character(len=64) :: command_line
         character(len=32) :: arg, args
+        character(len=16) :: ctslen, ctsmult, cnsp, cnts, cperlen
         dimension args(10)
         logical runid_commandline
         if (debug_cli) then
@@ -724,8 +725,9 @@ c     get and use command line args
             !   read and then move to next one
             !
             ! set the default time step multiplier
-            if (arg(1:9)).eq.'--tsmult=') then
-              read(arg(10:len(arg)),'(*)')xtsmult
+            if (arg(1:9).eq.'--tsmult=') then
+              ctsmult=arg(10:len(arg))
+              read(ctsmult,*)xtsmult
               if(xtsmult.ge.xtsmmin.and.xtsmult.le.xtsmmax) then
                 tsmultcli = .TRUE.
                 do i=1,10
@@ -735,8 +737,9 @@ c     get and use command line args
             endif
             ! set the default number of simulation periods
             ! note that nsp SHOULD be one of the args
-            if (arg(1:6)).eq.'--nsp=') then
-              read(arg(7:len(arg)),'(*)')insp
+            if (arg(1:6).eq.'--nsp=') then
+              cnsp = arg(7:len(arg))
+              read(cnsp,*)insp
               if(insp.ge.inspmin.and.insp.le.inspmax) then
                 nsp = insp
                 nspcli = .TRUE.
@@ -744,8 +747,9 @@ c     get and use command line args
             endif
             ! set the default time step length (years)
             ! note that nsp MUST be one of the args
-            if (arg(1:8)).eq.'--tslen=') then
-              read(arg(9:len(arg)),'(*)')itslen
+            if (arg(1:8).eq.'--tslen=') then
+              ctslen=arg(9:len(arg))
+              read(ctslen,*)itslen
               if(itslen.ge.itslmin.and.itslen.le.itslmax) then
                 tslencli = .TRUE.
                 do i=1,10
@@ -757,7 +761,7 @@ c     get and use command line args
             ! there should be multiple (nsp), comma delimited
             ! record the whole string and parse it later
             ! (why? because nsp might not have been read, yet)
-            if (arg(1:9)).eq.'--perlen=') then
+            if (arg(1:9).eq.'--perlen=') then
               cperlen=arg(10:len(arg))
               perlencli = .TRUE.
             endif
@@ -765,7 +769,7 @@ c     get and use command line args
             ! there should be multiple (nsp), comma delimited
             ! record the whole string and parse it later
             ! (why? because nsp might not have been read, yet)
-            if (arg(1:6)).eq.'--nts=') then
+            if (arg(1:6).eq.'--nts=') then
               cnts=arg(7:len(arg))
               ntscli = .TRUE.
             endif
@@ -782,13 +786,13 @@ c     get and use command line args
 c       parse the perlen and nts arg strings
         if(ntscli)then
           do i=1,nsp
-            read(cnts,'(*)',err=1111)ints
+            read(cnts,*,err=1111)ints
             nts(i)=ints
  1111       perlen(i)=nts(i)*tslen(i)
           end do
         else
           do i=1,nsp
-            read(cperlen,'(*)',err=1112)iperlen
+            read(cperlen,*,err=1112)iperlen
             perlen(i)=iperlen
  1112       nts(i)=perlen(i)/tslen(i)
           end do
@@ -1065,7 +1069,7 @@ c     subroutine 5000
         include 'aug4_common3.inc'
         ! local variables
         character(len=48) :: junkfilename, userinput
-        integer iperlen, sp, mdlidlen, fl_len, iline
+        integer sp, mdlidlen, fl_len, iline
         integer k1,k2,k3,k4,k5
         real*8 xperlen
         integer*8 i8perlen
@@ -1261,7 +1265,8 @@ c     select the number of stress time periods, spselect
         endif
         write(outcli,72)
  72     format(72('_'),/)  
-        write(outcli,*)"FILES RESIDENT ON THE APOLLO ARE CONFIGURED "//
+c        write(outcli,*)"FILES RESIDENT ON THE APOLLO ARE CONFIGURED "//
+        write(outcli,*)"FILES ARE CONFIGURED "//
      1    "AS FOLLOWS WITH RESPECT TO TIME:"
         write(outcli,*)
         write(outcli,*)
@@ -1269,9 +1274,9 @@ c     select the number of stress time periods, spselect
         write(outcli,*)
      1    "-------------   -----------------   ------   --------------"
         write(outcli,*)
-     1    "     1                 20            1.01         100"
+     1    "     1                 20            1.00         100"
         write(outcli,*)
-     1    "     2                 60            1.01         300"
+     1    "     2                 60            1.00         300"
  98     write(outcli,*)
         write(outcli,*)
      1    "If you wish to simulate 2 stress periods as described above,"

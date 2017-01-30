@@ -11,5 +11,5 @@
       character(len=1) :: dirsep
       common /lblock2/ debug_cli, debug_log, versioncli, helpcli,
      1              nspcli, tslencli, ntscli, perlencli, tsmultcli
-      logical debug_cli, debug_log, versioncli, helpcli
+      logical debug_cli, debug_log, versioncli, helpcli,
      1              nspcli, tslencli, ntscli, perlencli, tsmultcli

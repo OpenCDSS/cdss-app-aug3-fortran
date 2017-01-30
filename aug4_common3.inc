@@ -10,28 +10,29 @@
       character(len=4) :: modelshort, modelshorts, nas
       character(len=1) :: ctownship, tns
       common /iblock3/ nts(10), ints,
-     0 tslen(10), itslen, itslmin, itslmax, perlen(10), iperlen,
-     0 nsp, insp, inspmin, inspmax, spcount, spselect,
-     1 aqselect, osel, aqcount, code, II, JJ,
-     2 section, sectionmin, sectionmax, sectioncolumn(36),
-     3 itownship, townshipmin, townshipmax,
-     4 range, rangemin, rangemax,
-     5 tnrs(22), imins(22), jmins(22), nrows(22), ncols(22),
-     6 tnr, imin, jmin, nrow, ncol,
-     7 modelcountmax, rivercountmax
+     1 tslen(10), itslen, itslmin, itslmax, perlen(10), iperlen,
+     2 nsp, insp, inspmin, inspmax, spcount, spselect,
+     3 aqselect, osel, aqcount, code, II, JJ,
+     4 section, sectionmin, sectionmax, sectioncolumn(36),
+     5 itownship, townshipmin, townshipmax,
+     6 range, rangemin, rangemax,
+     7 tnrs(22), imins(22), jmins(22), nrows(22), ncols(22),
+     8 tnr, imin, jmin, nrow, ncol,
+     9 modelcountmax, rivercountmax
       integer nts, ints,
-     0 tslen, itslen, itslmin, itslmax, perlen, iperlen,
-     0 nsp, insp, inspmin, inspmax, spcount, spselect,
-     1 aqselect, osel, aqcount, code, II, JJ,
-     2 section, sectionmin, sectionmax, sectioncolumn,
-     3 itownship, townshipmin, townshipmax,
-     4 range, rangemin, rangemax,
-     5 tnrs, imins, jmins, nrows, ncols,
-     6 tnr, imin, jmin, nrow, ncol,
-     7 modelcountmax, rivercountmax
-      common /rblock3/ tsmult(10),
-     0             xtsmult, xtsmmin, xtsmmax, fac
-      real tsmult, xtsmult, xtsmmin, xtsmmax, fac
+     1 tslen, itslen, itslmin, itslmax, perlen, iperlen,
+     2 nsp, insp, inspmin, inspmax, spcount, spselect,
+     3 aqselect, osel, aqcount, code, II, JJ,
+     4 section, sectionmin, sectionmax, sectioncolumn,
+     5 itownship, townshipmin, townshipmax,
+     6 range, rangemin, rangemax,
+     7 tnrs, imins, jmins, nrows, ncols,
+     8 tnr, imin, jmin, nrow, ncol,
+     9 modelcountmax, rivercountmax
+      common /rblock3/ tsmult(10), xtsmult, xtsmmin, xtsmmax, fac,
+     1             xnsp, xnspmin, xnspmax
+      real tsmult, xtsmult, xtsmmin, xtsmmax, fac,
+     1             xnsp, xnspmin, xnspmax
 c      common /lblock3/ 
 c      logical 
 
