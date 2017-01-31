@@ -689,7 +689,9 @@ c     get and use command line args
         endif
         !write(outcli,*) "command_line_len = ",command_line_len
         !write(outcli,*) "status = ",status
-        iargcount = 0
+        !skip the program name, arg(0)
+        !iargcount = 0
+        iargcount = 1
         do
           call get_command_argument(iargcount,arg)
           if (len_trim(arg) == 0) exit
