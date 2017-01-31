@@ -795,7 +795,7 @@ c       parse the perlen and nts arg strings
             perlen(i)=nts(i)*tslen(i)
           end do
         else
-          read(cnts,*,err=1112)(perlen(i),i=1,nsp)
+          read(cperlen,*,err=1112)(perlen(i),i=1,nsp)
  1112     do i=1,nsp
             nts(i)=perlen(i)/tslen(i)
           end do
