@@ -77,9 +77,9 @@ c     set the simulation period count default/max count
       data spselect  /2/
       data spcount   /10/
       data nsp       /2/
-      data xnsp      /2/
-      data xnspmin   /1/
-      data xnspmax   /5/
+      data insp      /2/
+      data inspmin   /1/
+      data inspmax   /5/
       data nspcli    /.FALSE./
 c _________________________________________________________
 c     set the time step length (years)
