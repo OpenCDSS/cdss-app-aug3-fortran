@@ -35,8 +35,8 @@ c _________________________________________________________
 c     Local variables
       integer ioptio, iback
 
-      data ver        /' 0.78'/
-      data vdate      /'01/13/2016  '/
+      data ver        /' 0.79'/
+      data vdate      /'01/31/2016  '/
       data fnlog      /'aug4.log'/
       data nlog       /13/
       data outcli     /6/
@@ -45,15 +45,18 @@ c     Local variables
       data t9unit2    /15/
       data t1unit1    /16/
       data t1unit2    /17/
-      data debug_cli  /.FALSE./ !turn this off in production
-      data debug_log  /.FALSE./ !turn this off in production
+      data debug_cli  /.TRUE./ !turn this off in production
+      data debug_log  /.TRUE./ !turn this off in production
       data versioncli /.FALSE./ ! this can get set if --version or -v is on the command line
       data helpcli    /.FALSE./ ! this can get set if --help or -h is on the command line
+c _________________________________________________________
       !     5020 DD1$="C:\AUG3\"
-c      data dirsep     /'/'/
-c      data dd1s       /'/home/jim/workspaces/dwr_aug3_scripts/'/
-      data dirsep     /'\'/
-      data dd1s       /'C:\AUG3\'/
+c LINUX VERSION      
+      data dirsep     /'/'/
+      data dd1s       /'/home/jim/workspaces/dwr_aug3_scripts/'/
+c MS-DOS/WINDOWS VERSION      
+c      data dirsep     /'\'/
+c      data dd1s       /'C:\AUG3\'/
 c _________________________________________________________
 c     set the default run id
       data rnns      /'R1'/
