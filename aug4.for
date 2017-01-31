@@ -790,16 +790,14 @@ c     get and use command line args
         end do
 c       parse the perlen and nts arg strings
         if(ntscli)then
-          do i=1,nsp
-            read(cnts,*,err=1111)ints
-            nts(i)=ints
- 1111       perlen(i)=nts(i)*tslen(i)
+          read(cnts,*,err=1111)(nts(i),i=1,nsp)
+ 1111     do i=1,nsp
+            perlen(i)=nts(i)*tslen(i)
           end do
         else
-          do i=1,nsp
-            read(cperlen,*,err=1112)iperlen
-            perlen(i)=iperlen
- 1112       nts(i)=perlen(i)/tslen(i)
+          read(cnts,*,err=1112)(perlen(i),i=1,nsp)
+ 1112     do i=1,nsp
+            nts(i)=perlen(i)/tslen(i)
           end do
         endif
         return
