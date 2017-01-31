@@ -1121,11 +1121,8 @@ c     subroutine 5000
 !     5095 IF PERLEN(X)>300 THEN BEEP:CLS:PRINT "LENGTH OF TIME STEP CANNOT EXCEED 300 YEARS.  (press RETURN to abort) ...";:INPUT "";N$:SYSTEM
 !     5100 NEXT X
           write(outcli,*)
-     1   "REMEMBER FILES ARE CONFIGURED FOR 2 STRESS PERIODS."
-c     1   "REMEMBER FILES ON APOLLO ARE CONFIGURED FOR 2 STRESS PERIODS."
-          write(outcli,*)
-     1    "  YOU WILL HAVE TO CHANGE TAPE1.DAT."
-c     1    "  YOU WILL HAVE TO CHANGE TAPE1.DAT ON THE APOLLO."
+     1 "REMEMBER TO CHANGE STRESS PERIOD PARAMETERS IN TAPE1.DAT " //
+     2 "IF NECESSARY."
           !loop through the nsp stress periods and get the stress period lengths
           do sp=1,nsp
  98         write(outcli,1001)sp
@@ -1261,6 +1258,8 @@ c     select the number of stress time periods, spselect
         include 'aug4_common2.inc'
         include 'aug4_common3.inc'
         ! local variables
+        integer i
+
 
         if (debug_cli) then
           write(outcli,*)"arg4 debug: createjunkfile: start"
@@ -1271,20 +1270,19 @@ c     select the number of stress time periods, spselect
         write(outcli,72)
  72     format(72('_'),/)  
 c        write(outcli,*)"FILES RESIDENT ON THE APOLLO ARE CONFIGURED "//
-        write(outcli,*)"FILES ARE CONFIGURED "//
-     1    "AS FOLLOWS WITH RESPECT TO TIME:"
+        write(outcli,*)"DEFAULT STRESS PERIOD CONFIGURATION:"
         write(outcli,*)
         write(outcli,*)
      1    "STRESS PERIOD   No. OF TIME STEPS   TSMULT   LENGTH (years)"
         write(outcli,*)
      1    "-------------   -----------------   ------   --------------"
-        write(outcli,*)
-     1    "     1                 20            1.00         100"
-        write(outcli,*)
-     1    "     2                 60            1.00         300"
+        do i=1,nsp
+          write(outcli,1001)i,nts(i),tsmult(i),perlen(i)
+        end do
+ 1001   format(3x,I3,15x,I4,11x,F6.3,8x,I4)
  98     write(outcli,*)
         write(outcli,*)
-     1    "If you wish to simulate 2 stress periods as described above,"
+     1  "If you wish to simulate the stress periods as described above,"
      2    //" enter 0."
         write(outcli,*)
      1   "Otherwise enter the number of stress periods to be simulated:"
