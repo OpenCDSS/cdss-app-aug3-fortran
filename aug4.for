@@ -669,9 +669,9 @@ c     get and use command line args
         ! local variables
         integer iargcount, i
         integer command_line_len, status
-        character(len=64) :: command_line
-        character(len=32) :: arg, args
-        character(len=16) :: ctslen, ctsmult, cnsp, cnts, cperlen
+        character(len=80) :: command_line
+        character(len=40) :: arg, args
+        character(len=40) :: ctslen, ctsmult, cnsp, cnts, cperlen
         dimension args(10)
         logical runid_commandline
         if (debug_cli) then
