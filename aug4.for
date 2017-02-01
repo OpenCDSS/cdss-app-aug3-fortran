@@ -789,12 +789,17 @@ c     get and use command line args
           iargcount = iargcount + 1
         end do
 c       parse the perlen and nts arg strings
+c       note: this is one place where there could be more checking
+c             of the command line args if desired
         if(ntscli)then
           read(cnts,*,err=1111)(nts(i),i=1,nsp)
  1111     do i=1,nsp
             perlen(i)=nts(i)*tslen(i)
           end do
         else
+c         if nts was not entered on the command line,
+c         then assume either the perlen was on the command line
+c         or the defaults are ok
           read(cperlen,*,err=1112)(perlen(i),i=1,nsp)
  1112     do i=1,nsp
             nts(i)=perlen(i)/tslen(i)
