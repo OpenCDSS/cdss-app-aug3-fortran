@@ -52,11 +52,11 @@ c     Local variables
 c _________________________________________________________
       !     5020 DD1$="C:\AUG3\"
 c LINUX VERSION      
-      data dirsep     /'/'/
-      data dd1s       /'/home/jim/workspaces/dwr_aug3_scripts/'/
+c      data dirsep     /'/'/
+c      data dd1s       /'/home/jim/workspaces/dwr_aug3_scripts/'/
 c MS-DOS/WINDOWS VERSION      
-c      data dirsep     /'\'/
-c      data dd1s       /'C:\AUG3\'/
+      data dirsep     /'\'/
+      data dd1s       /'C:\AUG3\'/
 c _________________________________________________________
 c     set the default run id
       data rnns      /'R1'/
