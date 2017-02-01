@@ -83,16 +83,16 @@ c     set the simulation period count default/max count
       data nspcli    /.FALSE./
 c _________________________________________________________
 c     set the time step length (years)
-      data itslen    /1/
+      data itslen    /5/
       data itslmin   /1/
       data itslmax   /10/
-      data tslen     /1,1,1,1,1,1,1,1,1,1/
-c     data tslen     /5,5,5,5,5,5,5,5,5,5/
+c      data tslen     /1,1,1,1,1,1,1,1,1,1/
+      data tslen     /5,5,5,5,5,5,5,5,5,5/
       data tslencli  /.FALSE./
 c _________________________________________________________
 c     set the number of time steps in each simulation period
-      data nts       /100,300,0,0,0,0,0,0,0,0/
-c      data nts       /20,60,0,0,0,0,0,0,0,0/
+c      data nts       /100,300,0,0,0,0,0,0,0,0/
+      data nts       /20,60,0,0,0,0,0,0,0,0/
       data ntscli    /.FALSE./
 c _________________________________________________________
 c     set the length (years) of each simulation period
