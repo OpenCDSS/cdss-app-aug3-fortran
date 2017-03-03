@@ -35,8 +35,8 @@ c _________________________________________________________
 c     Local variables
       integer ioptio, iback
 
-      data ver        /' 0.79'/
-      data vdate      /'01/31/2016  '/
+      data ver        /' 0.80'/
+      data vdate      /'03/03/2017  '/
       data fnlog      /'aug4.log'/
       data nlog       /13/
       data outcli     /6/
@@ -45,8 +45,8 @@ c     Local variables
       data t9unit2    /15/
       data t1unit1    /16/
       data t1unit2    /17/
-      data debug_cli  /.TRUE./ !turn this off in production
-      data debug_log  /.TRUE./ !turn this off in production
+      data debug_cli  /.FALSE./ !turn this off in production
+      data debug_log  /.FALSE./ !turn this off in production
       data versioncli /.FALSE./ ! this can get set if --version or -v is on the command line
       data helpcli    /.FALSE./ ! this can get set if --help or -h is on the command line
 c _________________________________________________________
