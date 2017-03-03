@@ -45,18 +45,18 @@ c     Local variables
       data t9unit2    /15/
       data t1unit1    /16/
       data t1unit2    /17/
-      data debug_cli  /.FALSE./ !turn this off in production
-      data debug_log  /.FALSE./ !turn this off in production
+      data debug_cli  /.TRUE./ !turn this off in production
+      data debug_log  /.TRUE./ !turn this off in production
       data versioncli /.FALSE./ ! this can get set if --version or -v is on the command line
       data helpcli    /.FALSE./ ! this can get set if --help or -h is on the command line
 c _________________________________________________________
       !     5020 DD1$="C:\AUG3\"
 c LINUX VERSION      
-c      data dirsep     /'/'/
-c      data dd1s       /'/home/jim/workspaces/dwr_aug3_scripts/'/
+      data dirsep     /'/'/
+      data dd1s       /'/home/jim/workspaces/dwr_aug3_scripts/'/
 c MS-DOS/WINDOWS VERSION      
-      data dirsep     /'\'/
-      data dd1s       /'C:\AUG3\'/
+c      data dirsep     /'\'/
+c      data dd1s       /'C:\AUG3\'/
 c _________________________________________________________
 c     set the default run id
       data rnns      /'R1'/
@@ -1408,19 +1408,19 @@ c     select the well location
         read (incli,*,err=98) section, rawtownship, range
         township = adjustl(rawtownship)
         lents = len(trim(township))
-          if (debug_cli) then
-            write(outcli,*)
-     1      "arg4 debug: selectwelllocation: section, township, range ",
-     2      section, township, range
-          endif
-          if (debug_log) then
-            write(nlog,*)
-     1      "arg4 debug: selectwelllocation: section, township, range ",
-     2      section, township, range
-          endif
+        if (debug_cli) then
+          write(outcli,*)
+     1   "arg4 debug: selectwelllocation: rawtownship, township, lents",
+     2    rawtownship, township, lents
+        endif
+        if (debug_log) then
+          write(nlog,*)
+     1   "arg4 debug: selectwelllocation: rawtownship, township, lents",
+     2    rawtownship, township, lents
+        endif
         if (section.ge.sectionmin.and.section.le.sectionmax) then
           if (range.ge.rangemin.and.range.le.rangemax) then
-            select case (len(trim(township)))
+            select case (lents)
               case (2)
                 read(township,'(I1)')itownship
                 ctownship = township(2:2)
@@ -1686,7 +1686,7 @@ c     subroutine 3270
           write(outcli,*)"arg4 debug: checkwelllocation: start"
         endif
         if (debug_log) then
-          write(outcli,*)"arg4 debug: checkwelllocation: start"
+          write(nlog,*)"arg4 debug: checkwelllocation: start"
         endif
         JJ = (70-range)*6 - 2
         AJ = sectioncolumn(section)
@@ -1819,6 +1819,7 @@ c     create tape9.dat (well) data file
         include 'aug4_common3.inc'
         ! local variables
         integer qselect, aqlayer, i, j, modelcount, icb, mx, xy, k, itmp
+        integer lents
         character(len=1) :: nuts
         character(len=24) :: rawtownship, trimtownship
         character(len=24) :: filename
@@ -1917,17 +1918,36 @@ c       well pumping and locations
  310          write(outcli,311)nas,k
  311          format(6X,A4,1X,I2,1X,"LOCATION:")
               read (incli,*,err=397) section,rawtownship,range
-              trimtownship=trim(rawtownship)
-              township=trimtownship(1:2)
+              township = adjustl(rawtownship)
+              lents = len(trim(township))
+              if (debug_cli) then
+                write(outcli,*)
+     1          "arg4 debug: createtape9: rawtownship, township, lents",
+     2          rawtownship, township, lents
+              endif
+              if (debug_log) then
+                write(nlog,*)
+     1          "arg4 debug: createtape9: rawtownship, township, lents",
+     2          rawtownship, township, lents
+              endif
 c_______________________________________________________________________              
 c             check the values, then check the location
 
         if (section.ge.sectionmin.and.section.le.sectionmax) then
           if (range.ge.rangemin.and.range.le.rangemax) then
-            read(township,'(I1)')itownship
-            !read(township,'(1x,A1)')ctownship
-            !itownship = township[1:1]
-            ctownship = township(2:2)
+
+            select case (lents)
+              case (2)
+                read(township,'(I1)')itownship
+                ctownship = township(2:2)
+              case (3)
+                read(township,'(I2)')itownship
+                ctownship = township(3:3)
+              case default
+                write(outcli,*)"Invalid township location (",
+     1          township,") Try again"
+                goto 310
+            end select
             if (debug_cli) then
               write(outcli,*)
      1        "arg4 debug: createtape9: itownship, ctownship",
