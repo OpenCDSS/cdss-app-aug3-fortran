@@ -35,8 +35,8 @@ c _________________________________________________________
 c     Local variables
       integer ioptio, iback
 
-      data ver        /' 0.80'/
-      data vdate      /'03/03/2017  '/
+      data ver        /' 0.81'/
+      data vdate      /'03/13/2017  '/
       data fnlog      /'aug4.log'/
       data nlog       /13/
       data outcli     /6/
@@ -1534,7 +1534,7 @@ c     select a model based on the aquifer and well location
         include 'aug4_common2.inc'
         include 'aug4_common3.inc'
         ! local variables
-        character(len=99) :: nuts
+        !character(len=99) :: nuts
 
         if (debug_cli) then
           write(outcli,*)"arg4 debug: assignmodel: start"
@@ -1628,8 +1628,10 @@ c     select a model based on the aquifer and well location
      1      "ADEQUATE MODEL NOT AVAILABLE. exit AUG4"
           endif
           write(outcli,*)
-     1    "ADEQUATE MODEL NOT AVAILABLE. Exiting AUG4..."
-          !read(incli,*)nuts
+     1    "ADEQUATE MODEL NOT AVAILABLE. "//
+     2    "Exiting AUG4: press ENTER to continue..."
+          !pause
+          read(incli,*)
           call exit(99)
         end if
           if (debug_cli) then
