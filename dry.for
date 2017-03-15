@@ -23,7 +23,7 @@
             IF (text(i:i+nt-1) == search_str(:nt)) icount = icount+1
          END DO
       end do
-      print*,"Found ",icount," occurances of DRY. "\\
+      print*,"Found ",icount," occurances of DRY. "//
      1       "Press ENTER to continue"
 !      print*,"   (testing - remove this line)"
       read(*,*)
