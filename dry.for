@@ -24,7 +24,7 @@
          END DO
       end do
       print*,"Found ",icount," occurances of DRY. "//
-     1       "Press ENTER to continue"
+     1       "Press ENTER WHOA to continue"
 !      print*,"   (testing - remove this line)"
       read(*,*)
       end program count_dry
