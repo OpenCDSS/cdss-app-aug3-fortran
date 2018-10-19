@@ -1,9 +1,9 @@
 # cdss_aug3_scripts
 AUG3 is a CDWR project that consists of an EXCEL interface that access these fortran program:
-  aug4.for:  Pre-processor that generates input files for MODFLOW program
-  aug4_db.for:  Pre-processor that gnerated input files for MODFLOW progrtam run fro areas with the Designated Basins 
-  dry.for: Post-processor that looks for and reports any dry cells in the MODFLOW output file
-  GS3DRIVE.for: 1988 version of MODFLOW updated to provide stream depletion data file
+1. aug4.for:  Pre-processor that generates input files for MODFLOW program
+1. aug4_db.for:  Pre-processor that gnerated input files for MODFLOW progrtam run fro areas with the Designated Basins 
+1. dry.for: Post-processor that looks for and reports any dry cells in the MODFLOW output file
+1. GS3DRIVE.for: 1988 version of MODFLOW updated to provide stream depletion data file
 
 ## 2017 improvement to aug4.for and dry.for
 small project for dwr to rewrite two aug3 gwbasic scripts (dry.bas, aug4.bas)from GWBASIC into fortran Previous dwr aug3 system requires gwbasic to run scripts like aug4.bas, dry.bas.  but gwbasic is an old 16 bit windows app and is problematic on modern windows computers.  Rewriting aug4.bas and dry.bas in a compilable computer language familiar to dwr staff will allow aug3 to be installed without needing gwbasic.  The fortran language was chosen because it is familiar to dwr staff, similar to basic in form, and still a relevant modern computer language with compiler implementations like GNU's gfortran. The versiom for aug4.for for this improvement is 0.81
