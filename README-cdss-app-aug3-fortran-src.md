@@ -1,5 +1,5 @@
 # cdss_aug3_scripts
-AUG3 is a CDSS program that consists of an EXCEL interface that access these fortran program:
+AUG3 is a CDSS program that consists of an EXCEL interface that accesses these fortran program:
 1. aug4.for:  Pre-processor that generates input files for MODFLOW program
 1. aug4_db.for:  Pre-processor that gnerated input files for MODFLOW progrtam run only in locations within the Designated Basins 
 1. dry.for: Post-processor that looks for and reports any dry cells in the MODFLOW output file
