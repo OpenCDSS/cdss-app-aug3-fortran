@@ -1,0 +1,6 @@
+# Ignore files in this folder
+# Actually, override the global ignores to commit the executable files, for archive purposes.
+!aug4.exe
+!aug4_db.exe
+!dry.exe
+!GS3DRIV.exe
