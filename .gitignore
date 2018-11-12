@@ -1,0 +1,18 @@
+# List of files to ignore globally in the repository
+
+# Temporary editor files
+
+*.swp
+*.swo
+
+# Temporary Windows files
+~$*
+
+# Products of compiling software (but need to be careful if library dependencies are included)
+*.o
+*.obj
+*.exe
+*.lib
+*.a
+*.so
+*.log

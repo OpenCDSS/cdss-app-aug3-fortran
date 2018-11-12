@@ -1,5 +1,23 @@
 c _________________________________________________________
       program aug4
+c _________________________________________________________
+c AUG3 MODFLOW Groundwater Model Preprocessor
+c AUG3 is a part of Colorado's Decision Support Systems (CDSS)
+c Copyright (C) 2016-2018 Colorado Department of Natural Resources
+c 
+c AUG3 is free software:  you can redistribute it and/or modify
+c     it under the terms of the GNU General Public License as published by
+c     the Free Software Foundation, either version 3 of the License, or
+c     (at your option) any later version.
+c 
+c     AUG3 is distributed in the hope that it will be useful,
+c     but WITHOUT ANY WARRANTY; without even the implied warranty of
+c     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+c     GNU General Public License for more details.
+c 
+c     You should have received a copy of the GNU General Public License
+c     along with AUG3.  If not, see <https://www.gnu.org/licenses/>.
+c _________________________________________________________
       IMPLICIT NONE
 c _________________________________________________________
 c Program Description
@@ -287,7 +305,7 @@ c     tape9 data
      6                  55,
      7                  43,
      8                  58,
-     9                  34,
+     9                  56,
      z                  60,
      1                  55/
       data ncols       /36,
@@ -1561,13 +1579,13 @@ c     select a model based on the aquifer and well location
             else if(II.lt.24) then
               modelshort = "NA"
 !     6205 IF I<44 AND J>65 THEN SHORT$="LF2"
-            else if(II.lt.44.and.JJ.gt.65) then
+            else if(II.lt.67.and.JJ.gt.46) then
               modelshort = "LF2"
 !     6210 IF I<87 AND J<39 THEN SHORT$="LF4"
             else if(II.lt.87.and.JJ.lt.39) then
               modelshort = "LF4"
 !     6220 IF I>66 AND J>55 THEN SHORT$="LF3"
-            else if(II.gt.66.and.JJ.gt.55) then
+            else if(II.gt.66.and.JJ.gt.52) then
               modelshort = "LF3"
             else
               modelshort = "NA"
@@ -1580,7 +1598,7 @@ c     select a model based on the aquifer and well location
             if(II.lt.66.and.JJ.lt.38) then
               modelshort = "AR1"
 !     6280 IF I<72 AND J>37 THEN SHORT$="AR2":GOTO 6380
-            else if(II.lt.72.and.JJ.gt.37) then
+            else if(II.lt.74.and.JJ.gt.37) then
               modelshort = "AR2"
 !     6290 IF I>83 AND J<47 THEN SHORT$="AR9":GOTO 6380
             else if(II.gt.83.and.JJ.lt.47) then
@@ -1589,7 +1607,7 @@ c     select a model based on the aquifer and well location
             else if(JJ.lt.38) then
               modelshort = "AR3"
 !     6310 IF I>77 THEN SHORT$="AR4"
-            else if(II.gt.77) then
+            else if(II.gt.73) then
               modelshort = "AR4"
             else
               modelshort = "NA"
