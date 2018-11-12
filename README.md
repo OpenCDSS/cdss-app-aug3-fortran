@@ -6,6 +6,8 @@ CDSS open source software are referred to as being part of OpenCDSS.
 * [Background](#background)
 * [Repository Contents](#repository-contents)
 * [Development Environment](#development-environment)
+* [License](#license)
+* [Contributing](#contributing)
 
 -----------
 
@@ -94,7 +96,7 @@ For example, use a Git Bash window to run Git command line tools.
 
 ## License
 
-The software is licensed under GPL v3+.  See the [LICENSE.md](license.md) file.
+The software is licensed under GPL v3+.  See the [LICENSE.md](LICENSE.md) file.
 
 ## Contributing
 
