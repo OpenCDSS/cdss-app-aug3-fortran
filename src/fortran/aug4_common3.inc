@@ -1,3 +1,23 @@
+c     ________________________________________________________________
+c     aug4_common3
+c     ________________________________________________________________
+c AUG3 MODFLOW Groundwater Model Preprocessor
+c AUG3 is a part of Colorado's Decision Support Systems (CDSS)
+c Copyright (C) 2016-2018 Colorado Department of Natural Resources
+c 
+c AUG3 is free software:  you can redistribute it and/or modify
+c     it under the terms of the GNU General Public License as published by
+c     the Free Software Foundation, either version 3 of the License, or
+c     (at your option) any later version.
+c 
+c     AUG3 is distributed in the hope that it will be useful,
+c     but WITHOUT ANY WARRANTY; without even the implied warranty of
+c     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+c     GNU General Public License for more details.
+c 
+c     You should have received a copy of the GNU General Public License
+c     along with AUG3.  If not, see <https://www.gnu.org/licenses/>.
+c     ________________________________________________________________
       common /cblock3/ shorts, dd1s, aqnam, aqnams(10), rns, rnns,
      1 aqshort, aqshorts(10), township, modelshort, ctownship,
      2 tns,nas,a1s,a2s,modelshorts(22),rivnames(15,22)
