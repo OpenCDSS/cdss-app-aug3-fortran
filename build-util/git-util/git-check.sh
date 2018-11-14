@@ -25,84 +25,9 @@
 # - warn if any repositories use Cygwin because mixing with Git for Windows can cause confusion in tools
 #
 
-version="1.3.0 2018-10-22"
+version="1.4.0 2018-11-13"
 
-# Determine which echo to use, needs to support -e
-# - normally built-in shell echo is OK, but on Debian Linux dash is used, and it does not support -e
-echo2='echo -e'
-testEcho=`echo -e test`
-if [ "${testEcho}" = '-e test' ]; then
-	# The -e option did not work as intended.
-	# -using the normal /bin/echo should work
-	# -printf is also an option
-	echo2='/bin/echo -e'
-	# The following does not seem to work
-	#echo2='printf'
-fi
-
-# Parse the command parameters
-while getopts :hm:p:v opt; do
-	#echo "Command line option is ${opt}"
-	case $opt in
-		h) # usage
-			echo ""
-			echo "Usage:  git-check.sh -m mainRepo -p productHome"
-			echo ""
-			echo "    git-check.sh -m product-main-repo -p DevFolder/Product"
-			echo "    git-check.sh -m cdss-app-tstool-main -p cdss-dev/TSTool"
-			echo "         -m specifies the main repo name."
-			echo "         -p specifies the product home folder relative to HOME"
-			echo "            (a git-repos folder is assumed to exist under this)."
-			echo ""
-			echo "    -h prints the usage"
-			echo "    -v prints the version"
-			echo ""
-			exit 0
-			;;
-		m) # Main repo name
-			mainRepo=$OPTARG
-			;;
-		p) # product home
-			productHomeFolder=$OPTARG
-			;;
-		v) # version
-			echo ""
-			echo "git-check version ${version}"
-			echo ""
-			echo "Git Utilities"
-			echo "Copyright 2017-2018 Open Water Foundation."
-			echo ""
-			echo "License GPLv3+:  GNU GPL version 3 or later"
-			echo ""
-			echo "There is ABSOLUTELY NO WARRANTY; for details see the"
-			echo "'Disclaimer of Warranty' section of the GPLv3 license in the LICENSE file."
-			echo "This is free software: you are free to change and redistribute it"
-			echo "under the conditions of the GPLv3 license in the LICENSE file."
-			echo ""
-			exit 0
-			;;
-		\?)
-			echo "Invalid option:  -$OPTARG" >&2
-			exit 1
-			;;
-		:)
-			echo "Option -$OPTARG requires an argument" >&2
-			exit 1
-			;;
-	esac
-done
-
-# Strings to change colors on output, to make it easier to indicate when actions are needed
-# - Colors in Git Bash:  https://stackoverflow.com/questions/21243172/how-to-change-rgb-colors-in-git-bash-for-windows
-# - Useful info:  http://webhome.csc.uvic.ca/~sae/seng265/fall04/tips/s265s047-tips/bash-using-colors.html
-# - See colors:  https://en.wikipedia.org/wiki/ANSI_escape_code#Unix-like_systems
-# - Set the background to black to eensure that white background window will clearly show colors contrasting on black.
-# - Yellow "33" in Linux can show as brown, see:  https://unix.stackexchange.com/questions/192660/yellow-appears-as-brown-in-konsole
-# - Tried to use RGB but could not get it to work - for now live with "yellow" as it is
-actionColor='\e[0;40;33m' # user needs to do something, 40=background black, 33=yellow
-actionWarnColor='\e[0;40;31m' # serious issue, 40=background black, 31=red
-okColor='\e[0;40;32m' # status is good, 40=background black, 32=green
-colorEnd='\e[0m' # To switch back to default color
+# List functions in alphabetical order
 
 # Determine the operating system that is running the script
 # - mainly care whether Cygwin
@@ -276,19 +201,107 @@ checkRepoStatus()
 	# End code from above StackOverflow article
 }
 
+# Print the script usage
+printUsage() {
+	echo ""
+	echo "Usage:  git-check.sh -m product-main-repo -g gitReposFolder"
+	echo ""
+	echo "Example:"
+	echo '  git-check.sh -m owf-util-git -g $HOME/owf-dev/Util-Git/git-repos'
+	echo ""
+	echo "-g specifies the folder containing 1+ Git repos for product."
+	echo "-h prints the usage"
+	echo "-m specifies the main repo name."
+	echo "-v prints the version"
+	echo ""
+}
 
 # Entry point into main script
-# - output some blank lines to make it easier to scroll back in window to see the start of output
+# - call functions from above as needed
+
+# Determine which echo to use, needs to support -e to output colored text
+# - normally built-in shell echo is OK, but on Debian Linux dash is used, and it does not support -e
+echo2='echo -e'
+testEcho=`echo -e test`
+if [ "${testEcho}" = '-e test' ]; then
+	# The -e option did not work as intended.
+	# -using the normal /bin/echo should work
+	# -printf is also an option
+	echo2='/bin/echo -e'
+	# The following does not seem to work
+	#echo2='printf'
+fi
+
+# Parse the command parameters
+while getopts :g:hm:p:v opt; do
+	#echo "Command line option is ${opt}"
+	case $opt in
+		g) # Folder containing Git repositories
+			gitReposFolder=$OPTARG
+			;;
+		h) # Usage
+			printUsage
+			exit 0
+			;;
+		m) # Main repository name, assumed that repository name will match folder for repository
+			mainRepo=$OPTARG
+			;;
+		p) # Product home, relative to $HOME, being phased out
+			echo "" 
+			echo "-p is obsolete.  Use -g instead." 
+			exit 1
+			;;
+		v) # version
+			echo ""
+			echo "git-check version ${version}"
+			echo ""
+			echo "Git Utilities"
+			echo "Copyright 2017-2018 Open Water Foundation."
+			echo ""
+			echo "License GPLv3+:  GNU GPL version 3 or later"
+			echo ""
+			echo "There is ABSOLUTELY NO WARRANTY; for details see the"
+			echo "'Disclaimer of Warranty' section of the GPLv3 license in the LICENSE file."
+			echo "This is free software: you are free to change and redistribute it"
+			echo "under the conditions of the GPLv3 license in the LICENSE file."
+			echo ""
+			exit 0
+			;;
+		\?)
+			echo "Invalid option:  -$OPTARG" >&2
+			exit 1
+			;;
+		:)
+			echo "Option -$OPTARG requires an argument" >&2
+			exit 1
+			;;
+	esac
+done
+
+# Output some blank lines to make it easier to scroll back in window to see the start of output
+
 echo ""
 echo ""
 echo ""
+
+# Strings to change colors on output, to make it easier to indicate when actions are needed
+# - Colors in Git Bash:  https://stackoverflow.com/questions/21243172/how-to-change-rgb-colors-in-git-bash-for-windows
+# - Useful info:  http://webhome.csc.uvic.ca/~sae/seng265/fall04/tips/s265s047-tips/bash-using-colors.html
+# - See colors:  https://en.wikipedia.org/wiki/ANSI_escape_code#Unix-like_systems
+# - Set the background to black to eensure that white background window will clearly show colors contrasting on black.
+# - Yellow "33" in Linux can show as brown, see:  https://unix.stackexchange.com/questions/192660/yellow-appears-as-brown-in-konsole
+# - Tried to use RGB but could not get it to work - for now live with "yellow" as it is
+actionColor='\e[0;40;33m' # user needs to do something, 40=background black, 33=yellow
+actionWarnColor='\e[0;40;31m' # serious issue, 40=background black, 31=red
+okColor='\e[0;40;32m' # status is good, 40=background black, 32=green
+colorEnd='\e[0m' # To switch back to default color
 
 # Check the operating system
 checkOperatingSystem
 
-if [ -z "${productHomeFolder}" ]; then
+if [ -z "${gitReposFolder}" ]; then
 	echo ""
-	echo "The product home is not specified - exiting."
+	echo "The Git repositories folder is not specified with -g.  Exiting."
 	echo ""
 	exit 1
 fi
@@ -300,19 +313,15 @@ if [ "${operatingSystem}" = "cygwin" ]; then
 	# Expect product files to be in Windows user files location (/cygdrive/...), not Cygwin user files (/home/...)
 	home2="/cygdrive/C/Users/$USER"
 fi
-# Product home is relative to the users files in a standard development files location
-# $HOME/
-#    DevFiles/
-#      ProductHome/
-#        git-repoos/
-#          repo-name1/
+# Git repsitories folder is relative to the user's files in a standard development location, for example:
+# $HOME/                     User's files.
+#    DevFiles/               Development files grouped by a system, product line, etc.
+#      ProductHome/          Development files for a specific product.
+#        git-repos/          Git repositories that comprise the product.
+#          repo-name1/       Git repository folders (each containing .git, etc.)
 #          repo-name2/
 #          ...
-productHomeFolderAbs="$home2/${productHomeFolder}"
-# Location of git repositories
-# - currently assume that there is a "git-repos" folder under the product home folder
-# - may allow this to be dynamic with a passed in scrip parameter
-gitReposFolder="${productHomeFolderAbs}/git-repos"
+#
 # Main repository in a group of repositories for a product
 # - this is where the product repository list file will live
 mainRepoAbs="${gitReposFolder}/${mainRepo}"
@@ -324,13 +333,6 @@ repoListFile="${mainRepoAbs}/build-util/product-repo-list.txt"
 # Check for local folder existence and exit if not as expected
 # - ensures that other logic will work as expected in folder structure
 
-if [ ! -d "${productHomeFolderAbs}" ]; then
-	echo ""
-	echo "Product home folder does not exist:  ${productHomeFolderAbs}"
-	echo "Exiting."
-	echo ""
-	exit 1
-fi
 if [ ! -d "${mainRepoAbs}" ]; then
 	echo ""
 	echo "Main repo folder does not exist:  ${mainRepoAbs}"
@@ -404,13 +406,11 @@ if [ "${cygwinRepoCount}" -ne "0" ]; then
 fi
 # Print message to alert about attention needed on any repository
 # Don't need to color the number of repositories
-echo "Product home folder: ${productHomeFolderAbs}"
 echo "Product Git repositories folder: ${gitReposFolder}"
 echo "Repository list file: ${repoListFile}"
 echo "================================================================================"
 echo "Number of repositories:                                                   ${repoCount}"
 if [ "${upToDateRepoCount}" -eq "${repoCount}" ]; then
-	${echo2} "Number of up-to-date repositories:                                        ${okColor}${upToDateRepoCount}${colorEnd}"
 	${echo2} "Number of up-to-date repositories:                                        ${okColor}${upToDateRepoCount}${colorEnd}"
 else
 	${echo2} "Number of up-to-date repositories:                                        ${actionColor}${upToDateRepoCount}${colorEnd}"
