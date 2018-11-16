@@ -13,7 +13,7 @@ CDSS open source software are referred to as being part of OpenCDSS.
 
 ## Background ## 
 
-AUG3 consists of four EXCEL interfaces, 17 groundwater models and four fortran programs.  More detailed information and a link to download the applications are available on the [AUG3 Denver Basin Model webpage on CDWR’s website] (http://water.state.co.us/DataMaps/ModelingCDSS/Pages/Aug3.aspx).  
+AUG3 consists of four EXCEL interfaces, 17 groundwater models and four fortran programs.  More detailed information and a link to download the applications are available on the [AUG3 Denver Basin Model webpage on CDWR’s website]http://water.state.co.us/DataMaps/ModelingCDSS/Pages/Aug3.aspx).  
 
 This repository is only for the fortran programs:
 
