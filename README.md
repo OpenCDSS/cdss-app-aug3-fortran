@@ -1,6 +1,6 @@
 # cdss-app-aug3-fortran
 
-AUG3 is a program within Colorado's Decision Support Systems (CDSS) to process data for MODFLOW groundwater modeling.
+AUG3 is a collection of computer applications within Colorado's Decision Support Systems (CDSS) created to calculate and report stream dpeleitons from well pmping in the Denver Basin aquifers.  Note that this collection of applications was intitated in 1985 and the origin of the numbers in the names of any names or files is unknown but is not related to versioning (i.e. AUG3 is not the third version of the program)
 CDSS open source software are referred to as being part of OpenCDSS.
 
 * [Background](#background)
@@ -13,12 +13,14 @@ CDSS open source software are referred to as being part of OpenCDSS.
 
 ## Background ## 
 
-AUG3 consists of an EXCEL interface that accesses these fortran programs:
+AUG3 consists of four EXCEL interfaces, 17 groundwater models and four fortran programs.  More detailed information and a link to download the applications are available on the [AUG3 Denver Basin Model webpage on CDWR’s website] (http://water.state.co.us/DataMaps/ModelingCDSS/Pages/Aug3.aspx).  
+
+This repository is only for the fortran programs:
 
 1. `aug4.for`:  Pre-processor that generates input files for MODFLOW program
-2. `aug4_db.for`:  Pre-processor that generated input files for MODFLOW program run only in locations within the Designated Basins 
+2. `aug4_db.for`:  Pre-processor that generates input files for MODFLOW program run only in locations within the Designated Basins 
 3. `dry.for`: Post-processor that looks for and reports any dry cells in the MODFLOW output file
-4. `GS3DRIVE.for`: 1983 version of MODFLOW revised in 1985, 1986 and 1990 by CDWR staff to provide stream depletion data file
+4. `GS3DRIVE.for`: 1983 version of MODFLOW revised in 1985, 1986 and 1990 by CDWR staff to provide stream depletion data file. This program has not been modified in over 27 years and is believed to have been compiled using lahey.  This repository is used only to archive this program.  Future work is needed to make the program compatible with gfortran.
 
 ### 2017 improvement to `aug4.for` and `dry.for`
 
