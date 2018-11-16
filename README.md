@@ -1,6 +1,7 @@
 # cdss-app-aug3-fortran
 
-AUG3 is a collection of computer applications within Colorado's Decision Support Systems (CDSS) created to calculate and report stream dpeleitons from well pmping in the Denver Basin aquifers.  Note that this collection of applications was intitated in 1985 and the origin of the numbers in the names of any names or files is unknown but is not related to versioning (i.e. AUG3 is not the third version of the program)
+AUG3 is a collection of computer applications within Colorado's Decision Support Systems (CDSS) created to calculate and report stream dpeleitons from well pmping in the Denver Basin aquifers.
+Note that this collection of applications was intitiated in 1985 and the origin of the numbers in the names of any programs or files is unknown but is not related to versioning (i.e. AUG3 is not the third version of the program).
 CDSS open source software are referred to as being part of OpenCDSS.
 
 * [Background](#background)
@@ -14,7 +15,7 @@ CDSS open source software are referred to as being part of OpenCDSS.
 ## Background ## 
 
 AUG3 consists of four EXCEL interfaces, 17 groundwater models and four fortran programs.  More detailed information and a link to download the applications are available on the [AUG3 Denver Basin Model webpage](http://water.state.co.us/DataMaps/ModelingCDSS/Pages/Aug3.aspx). 
-This repository is only for the fortran programs:
+This repository is only for these fortran programs:
 
 1. `aug4.for`:  Pre-processor that generates input files for MODFLOW program
 2. `aug4_db.for`:  Pre-processor that generates input files for MODFLOW program run only in locations within the Designated Basins 
@@ -33,11 +34,11 @@ The versiom for `aug4.for` for this improvement is 0.81.
 
 ### 2018 revision to `aug4.for` creating `aug4_db.for`
 
-`aug4.for` was revised to generate input files for areas in the Laramie-Fox Hills and Arapahoe Aquifers in the Designated Basins.
+`aug4.for` version 0.81 was revised to generate input files for areas in the Laramie-Fox Hills and Arapahoe Aquifers in the Designated Basins.
 In 2018 the model files for these aquifers within the Designated Basins were revised because of new geology.
 It was also found that these revisions required that the pre-processor needed to expand the area used to generate input information.
-The verison was renamed `aug4_db.for` and was given version number 0.91 and this code should only be used for the Designated Basin Excel program.
-All other versions of the Excel Program should apply `aug4.for` version 0.81.
+The revised pre-processor was renamed `aug4_db.for`and this code should only be used for the Designated Basin AUG3 applications.
+All other AUG3 applications should continue to use `aug4.for`.
 
 ## Repository Contents
 
